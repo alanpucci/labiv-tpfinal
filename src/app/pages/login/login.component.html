@@ -1,0 +1,34 @@
+<div class="main" [ngStyle]="{'height':!checkbox?'450px':'880px'}">  	
+    <input type="checkbox" id="chk" [(ngModel)]="checkbox" aria-hidden="true">
+        <div class="signup">
+            <form [formGroup]="signIn">
+                <label for="chk" aria-hidden="true">Iniciar Sesión</label>
+                <div class="row">
+                    <mat-form-field>
+                        <mat-label>Correo electrónico</mat-label>
+                        <input matInput place type="text" name="email" formControlName="email">
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <mat-form-field >
+                        <mat-label>Contraseña</mat-label>
+                        <input matInput color="white" type="password" name="password" formControlName="password">
+                    </mat-form-field>
+                </div>
+                <button type="submit" (click)="handleSignIn()">Ingresar</button>
+            </form>
+        </div>
+
+        <div class="login">
+            <label for="chk" aria-hidden="true" class="register-label">Registrarse</label>
+            <mat-tab-group mat-align-tabs="start" >
+                <mat-tab label="Paciente" >
+                    <app-register-patient [signedUp]="signedUp" (newPatient)="handleSignUp($event)"></app-register-patient>
+                </mat-tab>
+                <mat-tab label="Especialista">
+                    <app-register-specialist [signedUp]="signedUp" (newSpecialist)="handleSignUp($event)"></app-register-specialist>
+                </mat-tab>
+            </mat-tab-group>
+            
+        </div>
+</div>
