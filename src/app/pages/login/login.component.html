@@ -1,34 +1,65 @@
-<div class="main" [ngStyle]="{'height':!checkbox?'450px':'880px'}">  	
+<div class="main" [ngStyle]="{'height':!checkbox?'500px':!signUpType?'500px':'750px','width':!checkbox?'450px':'850px'}">  	
     <input type="checkbox" id="chk" [(ngModel)]="checkbox" aria-hidden="true">
         <div class="signup">
-            <form [formGroup]="signIn">
-                <label for="chk" aria-hidden="true">Iniciar Sesión</label>
-                <div class="row">
-                    <mat-form-field>
-                        <mat-label>Correo electrónico</mat-label>
-                        <input matInput place type="text" name="email" formControlName="email">
-                    </mat-form-field>
+            <div class="row">
+                <form class="col-9" [formGroup]="signIn">
+                    <label for="chk" aria-hidden="true">Iniciar Sesión</label>
+                    <div class="row">
+                        <mat-form-field>
+                            <mat-label>Correo electrónico</mat-label>
+                            <input matInput place type="text" name="email" formControlName="email">
+                        </mat-form-field>
+                    </div>
+                    <div class="row">
+                        <mat-form-field >
+                            <mat-label>Contraseña</mat-label>
+                            <input matInput color="white" type="password" name="password" formControlName="password">
+                        </mat-form-field>
+                    </div>
+                    <button class="button" type="submit" (click)="handleSignIn()">Ingresar</button>
+                </form>
+                <div *ngIf="!checkbox" class="col-3 fastSignIn-container">
+                    <button class="fastSignIn">
+                        <img style="height:100%; width: 100%;" src="../../../assets/paciente1.jpg" />
+                    </button>
+                    <button class="fastSignIn">
+                        <img style="height:100%; width: 100%;" src="../../../assets/paciente2.jpg" />
+                    </button>
+                    <button class="fastSignIn">
+                        <img style="height:100%; width: 100%;" src="../../../assets/paciente3.jpg" />
+                    </button>
+                    <button class="fastSignIn">
+                        <img style="height:100%; width: 100%;" src="../../../assets/especialista1.jpg" />
+                    </button>
+                    <button class="fastSignIn">
+                        <img style="height:100%; width: 100%;" src="../../../assets/especialista2.jpg" />
+                    </button>
+                    <button class="fastSignIn">
+                        <img style="height:100%; width: 100%;" src="../../../assets/admin.jpg" />
+                    </button>
                 </div>
-                <div class="row">
-                    <mat-form-field >
-                        <mat-label>Contraseña</mat-label>
-                        <input matInput color="white" type="password" name="password" formControlName="password">
-                    </mat-form-field>
-                </div>
-                <button type="submit" (click)="handleSignIn()">Ingresar</button>
-            </form>
+            </div>
         </div>
 
         <div class="login">
             <label for="chk" aria-hidden="true" class="register-label">Registrarse</label>
-            <mat-tab-group mat-align-tabs="start" >
-                <mat-tab label="Paciente" >
-                    <app-register-patient [signedUp]="signedUp" (newPatient)="handleSignUp($event)"></app-register-patient>
-                </mat-tab>
-                <mat-tab label="Especialista">
-                    <app-register-specialist [signedUp]="signedUp" (newSpecialist)="handleSignUp($event)"></app-register-specialist>
-                </mat-tab>
-            </mat-tab-group>
-            
+            <div class="row justify-content-between" *ngIf="!signUpType; else elseBlock">
+                <div class="col-5 d-flex flex-column align-items-center" (click)="pressImage('paciente')">
+                    <h3>Paciente</h3>
+                    <div class="img">
+                        <img src="../../../assets/patient.png" style="max-width:100%; max-height: 100%;" />
+                    </div>
+                </div>
+                <div class="col-5 d-flex flex-column align-items-center" (click)="pressImage('especialista')">
+                    <h3>Especialista</h3>
+                    <div class="img">
+                        <img src="../../../assets/doctor.png" style="max-width:100%; max-height: 100%;" />
+                    </div>
+                </div>
+            </div>
+            <ng-template #elseBlock>
+                <app-register-patient *ngIf="signUpType==='paciente'" [signedUp]="signedUp" (goBack)="handleGoBack()" (newPatient)="handleSignUp($event)"></app-register-patient>
+                <app-register-specialist *ngIf="signUpType==='especialista'" [signedUp]="signedUp" (goBack)="handleGoBack()" (newSpecialist)="handleSignUp($event)"></app-register-specialist>
+            </ng-template>
         </div>
 </div>

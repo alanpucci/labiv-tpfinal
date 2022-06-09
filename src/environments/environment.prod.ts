@@ -7,5 +7,8 @@ export const environment = {
     storageBucket: "alanpucci-mediplus.appspot.com",
     messagingSenderId: "68385540928",
     appId: "1:68385540928:web:6a7f54d37be8be3410c8a5"
-  }
+  },
+  recaptcha: {
+    siteKey: '6Legj1ogAAAAAFH1d4NozqGGsopaRJmLZBUCxEiz',
+  },
 };

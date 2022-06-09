@@ -13,7 +13,7 @@ export class HomeComponent implements OnInit {
   constructor(private auth:AuthService) { }
 
   ngOnInit(): void {
-    this.userData = this.auth.getUserData().user;
+    this.userData = this.auth.getUserData();
   }
 
 }

@@ -10,8 +10,10 @@ import { User } from 'src/app/models/user/user';
 })
 export class RegisterSpecialistComponent implements OnInit, OnChanges {
 
+  firstImage:File|null=null;
   @Input() signedUp:boolean=false;
   @Output() newSpecialist=new EventEmitter<User>();
+  @Output() goBack=new EventEmitter<any>();
   signUpForm = new FormGroup({
     name: new FormControl('', Validators.required),
     lastName: new FormControl('', Validators.required),
@@ -21,6 +23,7 @@ export class RegisterSpecialistComponent implements OnInit, OnChanges {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', Validators.required),
     repeatPassword: new FormControl('', Validators.required),
+    recaptcha: new FormControl(null, Validators.required)
   })
   constructor(private toast:ToastrService) { }
 
@@ -37,13 +40,23 @@ export class RegisterSpecialistComponent implements OnInit, OnChanges {
   }
 
   handleRegister(){
-    if(this.signUpForm.valid){
-      this.signUpForm.value["type"]="especialista";
+    try {
+      if(!this.firstImage || !this.signUpForm.valid) throw new Error()
+      this.signUpForm.value["type"]="paciente";
+      this.signUpForm.value["files"]=[this.firstImage];
+      this.firstImage=null
       this.newSpecialist.emit(this.signUpForm.value);
-    }
-    else{
+    } catch (error) {
       this.toast.error("Todos los campos son requeridos")
     }
+  }
+
+  onFileSelected(event:any) {
+      this.firstImage=event.target.files[0];
+  }
+
+  handleGoBack(){
+    this.goBack.emit();
   }
 
 }

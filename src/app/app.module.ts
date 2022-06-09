@@ -1,3 +1,4 @@
+import { MatButtonModule } from '@angular/material/button';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -19,6 +20,9 @@ import { ToastrModule } from 'ngx-toastr';
 import { RegisterPatientComponent } from './components/register-patient/register-patient.component';
 import { RegisterSpecialistComponent } from './components/register-specialist/register-specialist.component';
 import {MatIconModule} from '@angular/material/icon';
+import { RegisterAdminComponent } from './components/register-admin/register-admin.component';
+import { ListUsersComponent } from './components/list-users/list-users.component';
+import { RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings, RECAPTCHA_SETTINGS } from 'ng-recaptcha';
 
 @NgModule({
   declarations: [
@@ -26,6 +30,8 @@ import {MatIconModule} from '@angular/material/icon';
     LoginComponent,
     RegisterPatientComponent,
     RegisterSpecialistComponent,
+    RegisterAdminComponent,
+    ListUsersComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,9 +49,17 @@ import {MatIconModule} from '@angular/material/icon';
     AngularFireStorageModule,
     AngularFireDatabaseModule,
     MatTabsModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonModule,
+    RecaptchaFormsModule,
+    RecaptchaModule
   ],
-  providers: [],
+  providers: [{
+    provide: RECAPTCHA_SETTINGS,
+    useValue: {
+      siteKey: environment.recaptcha.siteKey,
+    } as RecaptchaSettings
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

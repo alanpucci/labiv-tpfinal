@@ -13,6 +13,7 @@ export class LoginComponent implements OnInit {
 
   signedUp:boolean=false;
   checkbox:boolean=false;
+  signUpType:string="";
   signIn = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', Validators.required),
@@ -31,8 +32,15 @@ export class LoginComponent implements OnInit {
   }
 
   async handleSignIn(){
-    console.log('holis')
     await this.auth.signIn(this.signIn.get('email')?.value, this.signIn.get('password')?.value);
+  }
+
+  pressImage(img:string) {
+    this.signUpType=img;
+  }
+
+  handleGoBack(){
+    this.signUpType="";
   }
 
 

@@ -4,12 +4,13 @@ export class User {
   lastName: string="";
   age: number=0;
   dni: number=0;
-  images?: string | string[];
   speciality?: string;
   socialWork?: string;
   password?: string;
   repeatPassword?: string;
   type: string="";
+  files?: File[]
+  images?: string[]
 
 //   constructor(
 //     email: string,
