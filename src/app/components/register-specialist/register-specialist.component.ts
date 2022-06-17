@@ -1,3 +1,4 @@
+import { SpecialitiesService } from './../../services/specialities/specialities.service';
 import { Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -25,9 +26,10 @@ export class RegisterSpecialistComponent implements OnInit, OnChanges {
     repeatPassword: new FormControl('', Validators.required),
     recaptcha: new FormControl(null, Validators.required)
   })
-  constructor(private toast:ToastrService) { }
+  constructor(private toast:ToastrService, public specialitiesService:SpecialitiesService) { }
 
   ngOnInit(): void {
+    this.specialitiesService.loadSpecialities();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -42,7 +44,7 @@ export class RegisterSpecialistComponent implements OnInit, OnChanges {
   handleRegister(){
     try {
       if(!this.firstImage || !this.signUpForm.valid) throw new Error()
-      this.signUpForm.value["type"]="paciente";
+      this.signUpForm.value["type"]="especialista";
       this.signUpForm.value["files"]=[this.firstImage];
       this.firstImage=null
       this.newSpecialist.emit(this.signUpForm.value);

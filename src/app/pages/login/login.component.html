@@ -19,22 +19,22 @@
                     <button class="button" type="submit" (click)="handleSignIn()">Ingresar</button>
                 </form>
                 <div *ngIf="!checkbox" class="col-3 fastSignIn-container">
-                    <button class="fastSignIn">
+                    <button class="fastSignIn" (click)="handleFastSignIn('paciente1')">
                         <img style="height:100%; width: 100%;" src="../../../assets/paciente1.jpg" />
                     </button>
-                    <button class="fastSignIn">
+                    <button class="fastSignIn" (click)="handleFastSignIn('paciente2')">
                         <img style="height:100%; width: 100%;" src="../../../assets/paciente2.jpg" />
                     </button>
-                    <button class="fastSignIn">
+                    <button class="fastSignIn" (click)="handleFastSignIn('paciente3')">
                         <img style="height:100%; width: 100%;" src="../../../assets/paciente3.jpg" />
                     </button>
-                    <button class="fastSignIn">
+                    <button class="fastSignIn" (click)="handleFastSignIn('especialista1')">
                         <img style="height:100%; width: 100%;" src="../../../assets/especialista1.jpg" />
                     </button>
-                    <button class="fastSignIn">
+                    <button class="fastSignIn" (click)="handleFastSignIn('especialista2')">
                         <img style="height:100%; width: 100%;" src="../../../assets/especialista2.jpg" />
                     </button>
-                    <button class="fastSignIn">
+                    <button class="fastSignIn" (click)="handleFastSignIn('admin')">
                         <img style="height:100%; width: 100%;" src="../../../assets/admin.jpg" />
                     </button>
                 </div>

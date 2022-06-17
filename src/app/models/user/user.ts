@@ -2,6 +2,7 @@ export class User {
   email: string="";
   name: string="";
   lastName: string="";
+  creationDate?: Date;
   age: number=0;
   dni: number=0;
   speciality?: string;
@@ -10,7 +11,9 @@ export class User {
   repeatPassword?: string;
   type: string="";
   files?: File[]
-  images?: string[]
+  images: string[]=[]
+  imagesUrl?: string[]
+  state?:string;
 
 //   constructor(
 //     email: string,

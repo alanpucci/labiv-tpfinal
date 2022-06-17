@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-register-admin',
@@ -7,9 +10,41 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RegisterAdminComponent implements OnInit {
 
-  constructor() { }
+  image:File|null=null;
+  signUpForm = new FormGroup({
+    name: new FormControl('', Validators.required),
+    lastName: new FormControl('', Validators.required),
+    age: new FormControl('',[Validators.pattern("^[0-9]*$"),Validators.required, Validators.min(18), Validators.max(99)]),
+    dni: new FormControl('',[Validators.pattern("^[0-9]*$"),Validators.required, Validators.maxLength(8)]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', Validators.required),
+    repeatPassword: new FormControl('', Validators.required),
+    recaptcha:new FormControl(null, Validators.required)
+  })
+
+  constructor(private toast:ToastrService, private auth:AuthService) { }
 
   ngOnInit(): void {
+  }
+
+  async handleRegister(){
+    try {
+      if(!this.image || !this.signUpForm.valid) throw new Error()
+      this.signUpForm.value["type"]="admin";
+      this.signUpForm.value["files"]=[this.image];
+      this.image=null
+      const res = await this.auth.signUp(this.signUpForm.value)
+      if(res){
+        this.signUpForm.reset();
+        this.image=null;
+      }
+    } catch (error) {
+      this.toast.error("Todos los campos son requeridos")
+    }
+  }
+
+  onFileSelected(event:any, first:boolean) {
+    this.image=event.target.files[0];
   }
 
 }

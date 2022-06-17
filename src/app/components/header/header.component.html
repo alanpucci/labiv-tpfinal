@@ -3,11 +3,20 @@
       <span>{{userType}}</span>
       <span class="example-spacer"></span>
       <div class="d-flex flex-direction-column">
-        <button routerLink="/home/register-admin" mat-button>
+        <button *ngIf="userType==='admin'" routerLink="/home/register-admin" mat-button>
           Alta
         </button>
-        <button routerLink="/home/list-users" mat-button>
+        <button *ngIf="userType==='admin'" routerLink="/home/list-users" mat-button>
           Usuarios
+        </button>
+        <button routerLink="/home/profile" mat-button>
+          Perfil
+        </button>
+        <button routerLink="/home/appointments" mat-button>
+          Turnos
+        </button>
+        <button *ngIf="userType==='admin' || userType==='paciente'" routerLink="/home/request-appointment" mat-button>
+          Solicitar turno
         </button>
         <button mat-button (click)="signOut()">
           Cerrar sesión

@@ -5,7 +5,9 @@ export enum ERROR{
     USER_NOT_FOUND='auth/user-not-found',
     WRONG_PASSWORD='auth/wrong-password',
     EMPTY_FIELDS='empty-fields',
-    DIFFERENT_PASSWORDS='different-passwords'
+    DIFFERENT_PASSWORDS='different-passwords',
+    PENDING_USER="pending-user",
+    INACTIVE_USER="inactive-user"
 }
 
 export enum SUCCESS{

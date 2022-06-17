@@ -4,6 +4,72 @@
             <h2 class="title">Alta de administrador</h2>
         </div>
         <div class="row">
+            <form [formGroup]="signUpForm" style="margin-top:20px;" (ngSubmit)="handleRegister()">
+                <div class="row">
+                    <div class="col-6 d-flex justify-content-center">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Nombre</mat-label>
+                            <input matInput type="text" name="name" formControlName="name">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6 d-flex justify-content-center">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Apellido</mat-label>
+                            <input matInput type="text" name="lastName" formControlName="lastName">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 d-flex justify-content-center">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Edad</mat-label>
+                            <input matInput type="number" name="age" formControlName="age">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6 d-flex justify-content-center">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>DNI</mat-label>
+                            <input matInput type="number" name="dni" formControlName="dni">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 d-flex justify-content-center">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Correo electrónico</mat-label>
+                            <input matInput type="text" name="email" formControlName="email">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 d-flex justify-content-center">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Contraseña</mat-label>
+                            <input matInput type="password" name="password" formControlName="password">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6 d-flex justify-content-center">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Repetir contraseña</mat-label>
+                            <input matInput type="password" name="repeatPassword" formControlName="repeatPassword">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <input type="file"
+                    id="firstImage"
+                    (change)="onFileSelected($event, true)"
+                    name="firstImage"
+                    autocomplete="off"
+                    />
+                </div>
+                <br>
+                <re-captcha formControlName="recaptcha" name="recaptcha"></re-captcha>
+                <br>
+                <div class="col-12">
+                    <button mat-raised-button color="primary" type="submit">Crear cuenta</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

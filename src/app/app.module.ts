@@ -1,3 +1,4 @@
+import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -23,6 +24,17 @@ import {MatIconModule} from '@angular/material/icon';
 import { RegisterAdminComponent } from './components/register-admin/register-admin.component';
 import { ListUsersComponent } from './components/list-users/list-users.component';
 import { RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings, RECAPTCHA_SETTINGS } from 'ng-recaptcha';
+import { ProfileComponent } from './components/profile/profile.component';
+import { AppointmentsComponent } from './components/appointments/appointments.component';
+import { RequestAppointmentComponent } from './components/request-appointment/request-appointment.component';
+import { ScheduleModule } from '@syncfusion/ej2-angular-schedule';
+import { DateFormatPipe } from './pipes/date-format/date-format.pipe';
+import {MatDialogModule} from '@angular/material/dialog';
+import { AppointmentDialogComponent } from './components/appointment-dialog/appointment-dialog.component';
+import {TextFieldModule} from '@angular/cdk/text-field';
+import { ButtonTextPipe } from './pipes/button-text.pipe';
+import { ButtonColorPipe } from './pipes/buttonColor/button-color.pipe';
+import { WelcomeComponent } from './pages/welcome/welcome.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +44,14 @@ import { RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings, RECAPTCHA_SET
     RegisterSpecialistComponent,
     RegisterAdminComponent,
     ListUsersComponent,
+    ProfileComponent,
+    AppointmentsComponent,
+    RequestAppointmentComponent,
+    DateFormatPipe,
+    AppointmentDialogComponent,
+    ButtonTextPipe,
+    ButtonColorPipe,
+    WelcomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,7 +72,11 @@ import { RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings, RECAPTCHA_SET
     MatIconModule,
     MatButtonModule,
     RecaptchaFormsModule,
-    RecaptchaModule
+    RecaptchaModule,
+    MatSelectModule,
+    ScheduleModule,
+    MatDialogModule,
+    TextFieldModule
   ],
   providers: [{
     provide: RECAPTCHA_SETTINGS,

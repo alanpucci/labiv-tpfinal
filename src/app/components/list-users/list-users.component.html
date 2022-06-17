@@ -1,9 +1,37 @@
 <div class="register-container">
     <div class="col-8 register-form">
-        <div class="row">
-            <h2 class="title">Lista de usuarios</h2>
+        <div class="row justify-content-between">
+            <div class="col-3">
+                <h2 class="title">Lista de usuarios</h2>
+            </div>
+            <div class="col-2 flex-end">
+                <button class="w-100 btn btn-circle btn-primary" (click)="exportexcel()">Exportar a excel</button>
+            </div>
         </div>
-        <div class="row">
+        <div class="col-12">
+            <table id="excel-table" class="fl-table">
+                <thead>
+                  <tr>
+                    <th>Foto</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>Tipo</th>
+                    <th></th>
+                  </tr>
+                  </thead>
+                <tbody>
+                  <tr *ngFor="let user of usersService.users">
+                      <td><img width="100px" src={{images[user.email]}} /></td>
+                      <td>{{user.name}}</td>
+                      <td>{{user.lastName}}</td>
+                      <td>{{user.email}}</td>
+                      <td>{{user.type}}</td>
+                      <td><button (click)="updateUser(user.email,user.state!)" type="button" [ngClass]="{'btn-success':user.state!=='activo', 'btn-danger':user.state==='activo'}" class="btn btn-circle">{{user.state === "activo"?"Inhabilitar":"Habilitar"}}</button></td>
+                  </tr>
+              </tbody>
+              </table>
         </div>
+        
     </div>
 </div>

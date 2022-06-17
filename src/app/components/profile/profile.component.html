@@ -1,0 +1,10 @@
+<div class="profile-container">
+    <div *ngIf="image" class="col-5 profile-card">
+        <h1 class="title">Mi perfil</h1>
+        <img style="width:100%; max-width:400px" src={{image}} />
+        <br>
+        <h2>{{profile?.name}} {{profile?.lastName}}, {{profile?.age}} años</h2>
+        <h3>DNI: {{profile?.dni}}</h3>
+        <h3>Email: {{profile?.email}}</h3>
+    </div>
+</div>

@@ -16,6 +16,16 @@ import { ERROR, SUCCESS } from './auth.types';
   providedIn: 'root',
 })
 export class AuthService {
+
+  fastSignInUsers: string[] = [
+    'especialista1@gmail.com',
+    'especialista2@gmail.com',
+    'paciente1@gmail.com',
+    'paciente2@gmail.com',
+    'paciente3@gmail.com',
+    'admin@gmail.com',
+  ];
+  loggedUser:User|undefined;
   constructor(
     private router: Router,
     private afs: AngularFirestore,
@@ -47,6 +57,12 @@ export class AuthService {
       case ERROR.DIFFERENT_PASSWORDS:
         this.toastr.error('Las contraseñas no coinciden');
         break;
+      case ERROR.PENDING_USER:
+        this.toastr.error('Usuario pendiente de validación');
+        break;
+      case ERROR.PENDING_USER:
+        this.toastr.error('Usuario inactivo');
+      break;
       default:
         this.toastr.error(
           'Ha ocurrido un error, por favor reintente nuevamente'
@@ -63,41 +79,54 @@ export class AuthService {
     }
   }
 
+  //TODO: Refactorizar esta función asquerosa
   async signIn(email: string, password: string) {
     try {
+      if (!email || !password){
+        this.showError(ERROR.EMPTY_FIELDS);
+        return
+      } 
       this.spinner.show();
-      if (!email || !password) return this.showError(ERROR.EMPTY_FIELDS);
       await this.afs
         .collection('users', (ref) => ref.where('email', '==', email))
         .get()
         .subscribe((snapshot) => {
           snapshot.forEach(async (res) => {
             const data: any = res.data();
-            console.log(data);
             if (data.state === 'pendiente') {
               this.toastr.error('Usuario pendiente de validación');
+              this.spinner.hide();
               return;
             }
-            if (data[0].state === 'inactivo') {
+            if (data.state === 'inactivo') {
               this.toastr.error('Usuario inactivo');
+              this.spinner.hide();
               return;
             }
-            const userDB = await this.auth.signInWithEmailAndPassword(
-              email,
-              password
-            );
-            sessionStorage.setItem('user', JSON.stringify(data[0]));
-            this.ngZone.run(() => {
-              this.router.navigateByUrl('/home');
-            });
+            try {
+              const userDB = await this.auth.signInWithEmailAndPassword(
+                email,
+                password
+              );
+              if(!this.fastSignInUsers.includes(userDB.user?.email!) && !userDB.user?.emailVerified){
+                this.toastr.error('Usuario pendiente de validación');
+                this.spinner.hide();
+                return;
+              }
+              sessionStorage.setItem('user', JSON.stringify(data));
+              this.ngZone.run(() => {
+                this.loggedUser = data;
+                this.router.navigateByUrl('/home');
+                this.spinner.hide();
+              });
+            } catch (error:any) {
+              this.showError(error.code);
+              this.spinner.hide();
+            }
           });
         });
     } catch (error: any) {
       console.log(error.code);
-      this.showError(error.code);
-      this.spinner.hide();
-    } finally {
-      this.spinner.hide();
     }
   }
 
@@ -111,15 +140,19 @@ export class AuthService {
         userData.password!
       );
       let files:string[]=[];
-      console.log(userData.files)
       userData.files?.forEach(async (file, index) => {
         const fileName = `images/${userData.email}-${index}-${file.name}`;
         files.push(fileName);
         await this.storage.upload(fileName, file);
       })
       userData["images"] = files;
+      userData["creationDate"] = new Date();
+      userData["state"] = "pendiente"
+      delete userData['password']
+      delete userData['repeatPassword']
       delete userData["files"];
       await this.addUserData(userData);
+      await user.user?.sendEmailVerification();
       if (user) {
         this.toastr.success('Cuenta creada exitosamente');
         return true;

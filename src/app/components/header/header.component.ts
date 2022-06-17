@@ -9,7 +9,9 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 export class HeaderComponent implements OnInit {
 
   @Input() userType:string="";
-  constructor(private auth:AuthService) { }
+  constructor(private auth:AuthService) {
+
+  }
 
   ngOnInit(): void {
   }

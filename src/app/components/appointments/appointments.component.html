@@ -1,0 +1,61 @@
+<div class="register-container">
+  <div class="col-10 register-form">
+    <div class="row">
+      <div class="row align-items-center">
+        <div class="col-2">
+          <h2 class="title">Mis turnos</h2>
+        </div>
+        <div class="col-6">
+          <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Filtrar</mat-label>
+              <input matInput type="text" name="filterText" (ngModelChange)="filter($event)" [(ngModel)]="filterText">
+          </mat-form-field>
+      </div>
+      </div>
+      <div class="col-12">
+        <table class="fl-table">
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Horario</th>
+              <th>Especialidad</th>
+              <th>{{loggedUser.type==='paciente'?'Especialista':'Paciente'}}</th>
+              <th>Estado</th>
+              <th>Acción</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let appointment of appointmentsService[filterText.length>0?'filteredAppointments':'appointments']">
+              <td>{{ appointment.description }}</td>
+              <td>{{ appointment.startTime | dateFormat }}</td>
+              <td>{{ appointment.speciality}}</td>
+              <td>{{loggedUser.type==='paciente'?appointment.specialistName:appointment.patientName}}</td>
+              <td>{{ appointment.status}}</td>
+              <td>
+                <button *ngIf="appointment.status==='Cancelado' || appointment.status==='Terminado'"
+                  (click)="setStatus(appointment.status,appointment.id)"
+                  type="button"
+                  class="btn btn-circle"
+                  [ngClass]="appointment.status | buttonColor"
+                >
+                  {{appointment.status | buttonText}}
+                </button>
+              </td>
+              <td>
+                <button
+                  (click)="setStatus(appointment.status,appointment.id)"
+                  type="button"
+                  class="btn btn-circle"
+                  [ngClass]="appointment.status | buttonColor"
+                >
+                  {{appointment.status | buttonText}}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

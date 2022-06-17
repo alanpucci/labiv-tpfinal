@@ -21,12 +21,15 @@
     "@angular/platform-browser": "~13.3.0",
     "@angular/platform-browser-dynamic": "~13.3.0",
     "@angular/router": "~13.3.0",
+    "@syncfusion/ej2-angular-schedule": "^20.1.59",
+    "cldr-data": "^36.0.1",
     "firebase": "^9.8.2",
     "ng-recaptcha": "^9.0.0",
     "ngx-spinner": "^13.1.1",
     "ngx-toastr": "^14.3.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
