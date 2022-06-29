@@ -49,7 +49,7 @@ export class AppointmentDialogComponent implements OnInit {
       this.data.id,
       this.data.type,
       this.data.email,
-      { status: this.data.status, comment: this.comment }
+      { status: this.data.status, comment: this.comment, review: !!this.comment }
     );
   }
 }

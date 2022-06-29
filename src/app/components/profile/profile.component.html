@@ -1,10 +1,86 @@
 <div class="profile-container">
-    <div *ngIf="image" class="col-5 profile-card">
-        <h1 class="title">Mi perfil</h1>
-        <img style="width:100%; max-width:400px" src={{image}} />
-        <br>
-        <h2>{{profile?.name}} {{profile?.lastName}}, {{profile?.age}} años</h2>
-        <h3>DNI: {{profile?.dni}}</h3>
-        <h3>Email: {{profile?.email}}</h3>
+  <div *ngIf="image" class="col-5 profile-card">
+    <h1 class="title">Mi perfil</h1>
+    <img style="width: 100%; max-width: 400px" src="{{ image }}" />
+    <br />
+    <h2>
+      {{ profile?.name }} {{ profile?.lastName }}, {{ profile?.age }} años
+    </h2>
+    <h3>DNI: {{ profile?.dni }}</h3>
+    <h3>Email: {{ profile?.email }}</h3>
+    <br /><br />
+    <div *ngIf="authService.getUserData().type === 'paciente'"
+    style="width: 100%"
+    >
+    <h2>Mis historias clínicas</h2>
+
     </div>
+    <div
+      *ngIf="authService.getUserData().type === 'especialista'"
+      style="width: 100%"
+    >
+      <h2>Mis horarios</h2>
+      <form [formGroup]="scheduleForm" (ngSubmit)="confirmHours()">
+      <div class="row">
+        <h2>Seleccione la especialidad</h2>
+        <mat-form-field appearance="fill">
+        <mat-label>Especialidad</mat-label>
+          <mat-select formControlName="speciality">
+            <mat-option
+              *ngFor="let speciality of profile?.speciality"
+              value="{{speciality}}"
+              >{{speciality}}</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <section class="example-section" [formGroup]="scheduleForm">
+        <div>
+          <mat-checkbox formControlName="monday">Lunes</mat-checkbox>
+        </div>
+        <div class="row">
+          <mat-checkbox formControlName="tuesday">Martes</mat-checkbox>
+        </div>
+        <div class="row">
+          <mat-checkbox formControlName="wednesday">Miércoles</mat-checkbox>
+        </div>
+        <div class="row">
+          <mat-checkbox formControlName="thursday">Jueves</mat-checkbox>
+        </div>
+        <div class="row">
+          <mat-checkbox formControlName="friday">Viernes</mat-checkbox>
+        </div>
+      </section>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-6 d-flex justify-content-center">
+          <mat-form-field appearance="fill">
+            <mat-label>Horario de entrada</mat-label>
+            <mat-select formControlName="startTime" (selectionChange)="onChangeStartTime($event)"> 
+              <mat-option
+                *ngFor="let hour of startTimes"
+                value="{{hour}}"
+                >{{hour}}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-6 d-flex justify-content-center">
+            <mat-form-field appearance="fill">
+              <mat-label>Horario de salida</mat-label>
+              <mat-select formControlName="finishTime">
+              <mat-option
+                *ngFor="let hour of finishTimes"
+                value="{{hour}}"
+                >{{hour}}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <button mat-raised-button color="primary" type="submit">Confirmar horario</button>
+      </div></form>
+    </div>
+  </div>
 </div>

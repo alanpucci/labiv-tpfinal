@@ -1,2 +1,12 @@
 <ngx-spinner [fullScreen]="true" type="ball-scale-multiple" size="medium"></ngx-spinner>
-<router-outlet></router-outlet>
+<div
+  class="router-wrapper"
+  [@moveFromRight]="getState(o)"
+  [@rotateCubeToLeft]="getState(o)"
+  [@rotateFlipToBottom]="getState(o)"
+  [@rotateCubeToBottom]="getState(o)"
+  [@rotateCarouselToBottom]="getState(o)"
+  [@slide]="getState(o)"
+>
+  <router-outlet #o="outlet" > </router-outlet>
+</div>

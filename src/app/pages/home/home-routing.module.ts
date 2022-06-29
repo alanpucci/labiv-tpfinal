@@ -9,12 +9,12 @@ import { HomeComponent } from './home.component';
 
 const routes: Routes = [
   {path:'', component:HomeComponent, children:[
-    {path:'', pathMatch:'full', redirectTo:'/home/register-admin'},
+    {path:'', pathMatch:'full', redirectTo:'/home/profile'},
     {path:'register-admin', component:RegisterAdminComponent},
-    {path:'list-users', component:ListUsersComponent},
-    {path:'profile', component:ProfileComponent},
-    {path:'appointments', component:AppointmentsComponent},
-    {path:'request-appointment', component:RequestAppointmentComponent},
+    {path:'list-users',data:{state:'list-users'}, component:ListUsersComponent},
+    {path:'profile', data:{state:'profile'}, component:ProfileComponent},
+    {path:'appointments', data:{state:'appointments'}, component:AppointmentsComponent},
+    {path:'request-appointment',data:{state:'request-appointment'}, component:RequestAppointmentComponent},
   ]},
 ];
 

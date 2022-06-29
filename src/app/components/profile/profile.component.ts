@@ -1,10 +1,13 @@
+import { SpecialistHoursService } from './../../services/specialist-hours/specialist-hours.service';
 import { loadCldr, L10n } from '@syncfusion/ej2-base';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { User } from 'src/app/models/user/user';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { StorageService } from '../../services/storage/storage.service';
 import { EventSettingsModel } from '@syncfusion/ej2-angular-schedule';
-
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UsersService } from 'src/app/services/users/users.service';
+import { ToastrService } from 'ngx-toastr';
 
 declare let require: Function;
 loadCldr(
@@ -133,10 +136,9 @@ L10n.load({
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
 })
-export class ProfileComponent implements OnInit {
-
+export class ProfileComponent implements OnInit, OnChanges {
   public eventSettings: EventSettingsModel = {
     fields: {
       id: 'id',
@@ -144,16 +146,98 @@ export class ProfileComponent implements OnInit {
       startTime: { name: 'startTime' },
       endTime: { name: 'endTime' },
     },
+  };
+  profile: User | undefined;
+  image: string = '';
+  startTimes: string[] = [];
+  finishTimes: string[] = [];
+  scheduleForm = new FormGroup({
+    monday: new FormControl(''),
+    tuesday: new FormControl(''),
+    wednesday: new FormControl(''),
+    thursday: new FormControl(''),
+    friday: new FormControl(''),
+    startTime: new FormControl('', Validators.required),
+    finishTime: new FormControl('', Validators.required),
+    speciality: new FormControl('', Validators.required),
+  });
+  constructor(
+    public authService: AuthService,
+    private storageService: StorageService,
+    private scheduleService: SpecialistHoursService,
+    private toast: ToastrService
+  ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.scheduleForm.get('startTime')?.value!) {
+      const splittedHour = this.scheduleForm.get('startTime')?.value.split(':');
+      console.log(splittedHour);
+      this.finishTimes = this.createTimes(
+        splittedHour[0],
+        parseInt(splittedHour[1]) + 30
+      );
+    }
   }
-  profile:User|undefined;
-  image:string="";
-  constructor(private authService:AuthService, private storageService:StorageService) { }
 
   async ngOnInit() {
+    this.startTimes = this.createTimes(7, 0);
     this.profile = this.authService.getUserData();
-    (await this.storageService.getImgUrl(this.profile?.images[0]!)).subscribe(data => {
-      this.image = data;
-    });
+    this.scheduleService.loadHours(this.profile?.email!);
+    (await this.storageService.getImgUrl(this.profile?.images[0]!)).subscribe(
+      (data) => {
+        this.image = data;
+      }
+    );
   }
 
+  createTimes(hour: number, minutes: number) {
+    let times = [];
+    if (hour == 17 && minutes == 60) {
+      return ['18:00'];
+    }
+    for (var i = hour; i < 18; ++i) {
+      for (var j = i == hour ? Math.ceil(minutes / 30) : 0; j < 2; ++j) {
+        times.push((i < 12 ? i % 12 : i) + ':' + (j * 30 || '00'));
+      }
+    }
+    return times;
+  }
+
+  onChangeStartTime(hour: any) {
+    const splittedHour = hour.value.split(':');
+    this.finishTimes = this.createTimes(
+      splittedHour[0],
+      parseInt(splittedHour[1]) + 30
+    );
+  }
+
+  onChangeFinishTime(hour: any) {
+    this.scheduleForm.setValue({ finishTime: hour.value });
+  }
+
+  onChangeSpeciality(speciality: any) {
+    this.scheduleForm.setValue({ speciality: speciality.value });
+  }
+
+  async confirmHours() {
+    try {
+      if (!this.scheduleForm.valid) throw new Error();
+      const body = {
+        [this.scheduleForm.get('speciality')?.value!]: {
+          days: {
+            monday: this.scheduleForm.get('monday')?.value!,
+            tuesday: this.scheduleForm.get('tuesday')?.value!,
+            wednesday: this.scheduleForm.get('wednesday')?.value!,
+            thursday: this.scheduleForm.get('thursday')?.value!,
+            friday: this.scheduleForm.get('friday')?.value!,
+          },
+          startTime: this.scheduleForm.get('startTime')?.value!,
+          finishTime: this.scheduleForm.get('finishTime')?.value!,
+        },
+      };
+      await this.scheduleService.registerSchedule(this.profile?.email!, body);
+    } catch (error) {
+      this.toast.error('Todos los campos son requeridos');
+    }
+  }
 }

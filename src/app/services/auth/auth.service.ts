@@ -91,8 +91,8 @@ export class AuthService {
         .collection('users', (ref) => ref.where('email', '==', email))
         .get()
         .subscribe((snapshot) => {
-          snapshot.forEach(async (res) => {
-            const data: any = res.data();
+          snapshot.forEach(async (res:any) => {
+            const data: any = {...res.data(),id:res.id};
             if (data.state === 'pendiente') {
               this.toastr.error('Usuario pendiente de validación');
               this.spinner.hide();
@@ -113,6 +113,7 @@ export class AuthService {
                 this.spinner.hide();
                 return;
               }
+              
               sessionStorage.setItem('user', JSON.stringify(data));
               this.ngZone.run(() => {
                 this.loggedUser = data;
@@ -172,7 +173,7 @@ export class AuthService {
     this.router.navigateByUrl('');
   }
 
-  getUserData() {
+  getUserData():User {
     return JSON.parse(sessionStorage.getItem('user')!);
   }
 

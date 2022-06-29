@@ -6,9 +6,9 @@ import { WelcomeComponent } from './pages/welcome/welcome.component';
 
 const routes: Routes = [
   {path:'', pathMatch:'full', redirectTo:'/welcome'},
-  {path:'welcome', component:WelcomeComponent},
-  {path:'login', component:LoginComponent},
-  {path:'home', canActivate:[AuthGuard], loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule)},
+  {path:'welcome', component:WelcomeComponent, data: { state: 'welcome' }},
+  {path:'login', component:LoginComponent,data: { state: 'login' }},
+  {path:'home', canActivate:[AuthGuard], data: { state: 'profile'}, loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule)},
 ];
 
 @NgModule({

@@ -13,10 +13,8 @@ export class ButtonTextPipe implements PipeTransform {
         return "Calificar atención"
       case 'PrevioCompletado':
         return "Completar encuesta"
-      case 'Cancelado':
-      case 'Completado':
-      case 'Terminado':
-        return "Ver reseña"
+      case 'Aceptado':
+        return "Finalizar turno"
       default:
         return ""
     }

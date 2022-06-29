@@ -1,0 +1,106 @@
+<form [formGroup]="medicalRecordForm" (ngSubmit)="registerRecord()">
+    <!-- <form (submit)="registerComment()"> -->
+    <mat-dialog-content class="modal-container">
+        <h1>Registrar historia clínica</h1>
+        <h2>Completa los valores obligatorios</h2>
+        <div class="row">
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Altura (en cm)</mat-label>
+                <input matInput type="number" name="height" formControlName="height">
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Peso (en kg)</mat-label>
+                <input matInput type="number" name="weight" formControlName="weight">
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Temperatura (en Cº)</mat-label>
+                <input matInput type="number" name="temperature" formControlName="temperature">
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Presión (media)</mat-label>
+                <input matInput type="number" name="pressure" formControlName="pressure">
+            </mat-form-field>
+        </div>
+        <h2>Datos adicionales</h2>
+        <div class="row">
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Primer dato</mat-label>
+                <input matInput type="text" name="firstKey" formControlName="firstKey">
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Primer valor</mat-label>
+                <input matInput type="text" name="firstValue" formControlName="firstValue">
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Segundo dato</mat-label>
+                <input matInput type="text" name="secondKey" formControlName="secondKey">
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Segundo valor</mat-label>
+                <input matInput type="text" name="secondValue" formControlName="secondValue">
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Tercer dato</mat-label>
+                <input matInput type="text" name="thirdKey" formControlName="thirdKey">
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Tercer valor</mat-label>
+                <input matInput type="text" name="thirdValue" formControlName="thirdValue">
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Cuarto dato</mat-label>
+                <input matInput type="text" name="fourthKey" formControlName="fourthKey">
+            </mat-form-field>
+            <div class="col-6">
+                <mat-slider formControlName="fourthValue" name="fourthValue"
+                    thumbLabel class="w-100"
+                    tickInterval="1"
+                    step="1"
+                    min="0"
+                    max="10"
+                    aria-label="units"></mat-slider>
+            </div>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Quinto dato</mat-label>
+                <input matInput type="text" name="fifthKey" formControlName="fifthKey">
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Quinto valor</mat-label>
+                <input matInput type="number" name="fifthValue" formControlName="fifthValue">
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Sexto dato</mat-label>
+                <input matInput type="text" name="sixthKey" formControlName="sixthKey">
+            </mat-form-field>
+            <div class="col-6">
+                <div class="row switch">
+                    <div class="col-4">
+                        <p>No</p>
+                    </div>
+                    <div class="col-4" style="text-align: center;">
+                        <mat-slide-toggle formControlName="sixthValue"></mat-slide-toggle>
+                    </div>
+                    <div class="col-4">
+                        <p>Si</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancelar</button>
+        <button mat-button type="submit">Enviar</button>
+    </mat-dialog-actions>
+</form>

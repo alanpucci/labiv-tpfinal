@@ -1,3 +1,4 @@
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { NgModule } from '@angular/core';
@@ -35,6 +36,13 @@ import {TextFieldModule} from '@angular/cdk/text-field';
 import { ButtonTextPipe } from './pipes/button-text.pipe';
 import { ButtonColorPipe } from './pipes/buttonColor/button-color.pipe';
 import { WelcomeComponent } from './pages/welcome/welcome.component';
+import { ImageSrcDirective } from './directives/image-src.directive';
+import { ButtonClickedDirective } from './directives/button-clicked.directive';
+import { MedicalRecordComponent } from './components/medical-record/medical-record.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { MatSliderModule } from '@angular/material/slider';
+import { CaptchaComponent } from './components/captcha/captcha.component';
+
 
 @NgModule({
   declarations: [
@@ -52,6 +60,10 @@ import { WelcomeComponent } from './pages/welcome/welcome.component';
     ButtonTextPipe,
     ButtonColorPipe,
     WelcomeComponent,
+    ImageSrcDirective,
+    ButtonClickedDirective,
+    MedicalRecordComponent,
+    CaptchaComponent,
   ],
   imports: [
     BrowserModule,
@@ -76,7 +88,10 @@ import { WelcomeComponent } from './pages/welcome/welcome.component';
     MatSelectModule,
     ScheduleModule,
     MatDialogModule,
-    TextFieldModule
+    TextFieldModule,
+    MatCheckboxModule,
+    MatSlideToggleModule,
+    MatSliderModule
   ],
   providers: [{
     provide: RECAPTCHA_SETTINGS,

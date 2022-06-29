@@ -25,6 +25,7 @@
     "cldr-data": "^36.0.1",
     "firebase": "^9.8.2",
     "ng-recaptcha": "^9.0.0",
+    "ngx-router-animations": "^13.0.0",
     "ngx-spinner": "^13.1.1",
     "ngx-toastr": "^14.3.0",
     "rxjs": "~7.5.0",

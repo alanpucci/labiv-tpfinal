@@ -1,4 +1,12 @@
-<app-header [userType]="userData.type"></app-header>
-<div class="home-container">
-    <router-outlet></router-outlet>
+<div
+    class="router-wrapper"
+    [@moveFromRight]="getState(o)"
+    [@rotateCubeToLeft]="getState(o)"
+    [@rotateFlipToBottom]="getState(o)"
+    [@rotateCubeToBottom]="getState(o)"
+    [@rotateCarouselToBottom]="getState(o)"
+    [@slide]="getState(o)"
+>
+    <app-header [userType]="userData.type"></app-header>
+  <router-outlet #o="outlet" > </router-outlet>
 </div>

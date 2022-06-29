@@ -7,10 +7,16 @@
         </div>
         <div class="col-6">
           <mat-form-field appearance="fill" class="w-100">
-              <mat-label>Filtrar</mat-label>
-              <input matInput type="text" name="filterText" (ngModelChange)="filter($event)" [(ngModel)]="filterText">
+            <mat-label>Filtrar</mat-label>
+            <input
+              matInput
+              type="text"
+              name="filterText"
+              (ngModelChange)="filter($event)"
+              [(ngModel)]="filterText"
+            />
           </mat-form-field>
-      </div>
+        </div>
       </div>
       <div class="col-12">
         <table class="fl-table">
@@ -19,39 +25,113 @@
               <th>Descripción</th>
               <th>Horario</th>
               <th>Especialidad</th>
-              <th>{{loggedUser.type==='paciente'?'Especialista':'Paciente'}}</th>
+              <th>
+                {{
+                  loggedUser.type === "paciente" ? "Especialista" : "Paciente"
+                }}
+              </th>
               <th>Estado</th>
+              <th>Reseña</th>
               <th>Acción</th>
               <th>Acción</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let appointment of appointmentsService[filterText.length>0?'filteredAppointments':'appointments']">
+            <tr
+              *ngFor="
+                let appointment of appointmentsService[
+                  filterText.length > 0
+                    ? 'filteredAppointments'
+                    : 'appointments'
+                ]
+              "
+            >
               <td>{{ appointment.description }}</td>
               <td>{{ appointment.startTime | dateFormat }}</td>
-              <td>{{ appointment.speciality}}</td>
-              <td>{{loggedUser.type==='paciente'?appointment.specialistName:appointment.patientName}}</td>
-              <td>{{ appointment.status}}</td>
+              <td>{{ appointment.speciality }}</td>
               <td>
-                <button *ngIf="appointment.status==='Cancelado' || appointment.status==='Terminado'"
-                  (click)="setStatus(appointment.status,appointment.id)"
+                {{
+                  loggedUser.type === "paciente"
+                    ? appointment.specialistName
+                    : appointment.patientName
+                }}
+              </td>
+              <td>{{ appointment.status }}</td>
+              <td>
+                <button
+                  *ngIf="appointment.review"
+                  type="button"
+                  class="btn btn-circle btn-info"
+                >
+                  Ver reseña
+                </button>
+              </td>
+              <div *ngIf="loggedUser.type === 'especialista'; else elseBlock">
+                <td [ngSwitch]="appointment.status">
+                  <button
+                    *ngSwitchCase="'Pendiente'"
+                    type="button"
+                    class="btn btn-circle btn-success"
+                    (click)="setStatus(appointment, appointment.id)"
+                  >
+                    Aceptar turno
+                  </button>
+                </td>
+              </div>
+              <ng-template #elseBlock>
+                <td [ngSwitch]="appointment.status">
+                  <button
+                    *ngSwitchCase="'Pendiente'"
+                    type="button"
+                    class="btn btn-circle btn-success"
+                  >
+                    <!-- {{appointment.status | buttonText}} -->
+                    Aceptar turno
+                  </button>
+                </td>
+              </ng-template>
+              <td>
+                <button
+                  *ngIf="appointment.status"
+                  (click)="setStatus(appointment, appointment.id)"
                   type="button"
                   class="btn btn-circle"
                   [ngClass]="appointment.status | buttonColor"
                 >
-                  {{appointment.status | buttonText}}
+                  {{ appointment.status | buttonText }}
+                </button>
+              </td>
+              <!-- <td>
+                <button
+                  *ngIf="
+                    (loggedUser.type === 'especialista' &&
+                      appointment.status === 'Pendiente') ||
+                    (loggedUser.type === 'paciente' &&
+                      appointment.status === 'Terminado')
+                  "
+                  (click)="setStatus(loggedUser.type === 'especialista' ? 'Aceptar' : 'Atendido', appointment.id)"
+                  type="button"
+                  class="btn btn-circle btn-success"
+                >
+                  {{loggedUser.type === 'especialista' ? 'Aceptar turno' : 'Calificar atención'}}
                 </button>
               </td>
               <td>
                 <button
-                  (click)="setStatus(appointment.status,appointment.id)"
+                  *ngIf="
+                    !(
+                      loggedUser.type === 'paciente' &&
+                      appointment.status === 'Aceptado'
+                    )
+                  "
+                  (click)="setStatus(appointment.status, appointment.id)"
                   type="button"
                   class="btn btn-circle"
                   [ngClass]="appointment.status | buttonColor"
                 >
-                  {{appointment.status | buttonText}}
+                  {{ appointment.status | buttonText }}
                 </button>
-              </td>
+              </td> -->
             </tr>
           </tbody>
         </table>

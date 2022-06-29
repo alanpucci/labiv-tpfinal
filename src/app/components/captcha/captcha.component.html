@@ -1,0 +1,19 @@
+<div style="width: 200px;">
+    <div class="row">
+        <div class="col-8">
+            <div id="captcha" class="captcha"></div>
+        </div>
+        <div class="col-4">
+            <button class="btn rounded btn-primary" (click)="createCaptcha()">Cambiar</button>
+        </div>
+    </div>
+    <div class="input">
+      <input
+        type="text"
+        name="reCaptcha"
+        id="reCaptcha"
+        [(ngModel)]="enteredCaptcha"
+        placeholder="Ingresá el código"
+      />
+    </div>
+<div id="errCaptcha" class="errmsg"></div>

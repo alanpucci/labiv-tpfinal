@@ -11,11 +11,12 @@ export class ButtonColorPipe implements PipeTransform {
         return "btn-danger"
       case 'Atendido':
       case 'PrevioCompletado':
+      case 'Aceptado':
         return "btn-success"
       case 'Cancelado':
       case 'Completado':
       case 'Terminado':
-        return "btn-info"
+        return "d-none"
       default:
         return "Pendiente"
     }

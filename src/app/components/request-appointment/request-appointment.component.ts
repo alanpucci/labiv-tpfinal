@@ -1,3 +1,4 @@
+import { SpecialistHoursService } from './../../services/specialist-hours/specialist-hours.service';
 import { UsersService } from './../../services/users/users.service';
 import { SpecialitiesService } from './../../services/specialities/specialities.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
@@ -17,6 +18,8 @@ import {
 import { L10n, loadCldr } from '@syncfusion/ej2-base';
 import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { StorageService } from 'src/app/services/storage/storage.service';
+import { User } from 'src/app/models/user/user';
 
 declare let require: Function;
 loadCldr(
@@ -159,7 +162,6 @@ L10n.load({
   ],
 })
 export class RequestAppointmentComponent implements OnInit {
-
   public eventSettings: EventSettingsModel = {
     fields: {
       id: 'id',
@@ -167,27 +169,41 @@ export class RequestAppointmentComponent implements OnInit {
       startTime: { name: 'startTime' },
       endTime: { name: 'endTime' },
     },
-  }
-
-  signUpForm = new FormGroup({
-    speciality: new FormControl('', Validators.required),
-    specialist: new FormControl('', Validators.required),
-  });
-  appointment:any;
+  };
+  appointment: any;
   minDate: Date = new Date();
   maxDate: Date = this.addDays(new Date(), 15);
   days: any[] = [];
+  images: any;
+  selectedSpecialist: User | undefined;
+  selectedSpeciality: string | undefined;
+  selectedPatient: User | undefined;
 
   constructor(
     public specialitiesService: SpecialitiesService,
     public userService: UsersService,
+    public scheduleService: SpecialistHoursService,
     private appointmentService: AppointmentsService,
-    private authService: AuthService
+    public authService: AuthService,
+    private storageService: StorageService
   ) {}
 
   ngOnInit(): void {
-    this.specialitiesService.loadSpecialities();
     this.getDaysArray();
+    this.specialitiesService.loadSpecialities();
+    this.userService.getAllSpecialists();
+    if (this.authService.getUserData().type === 'admin') {
+      this.userService.getAllPatients();
+    }
+    setTimeout(async () => {
+      this.userService.specialists.forEach(async (user) => {
+        (await this.storageService.getImgUrl(user.images[0])).subscribe(
+          (data) => {
+            this.images = { ...this.images, [user.email]: data };
+          }
+        );
+      });
+    }, 2000);
   }
 
   addDays(date: Date, days: number) {
@@ -219,41 +235,56 @@ export class RequestAppointmentComponent implements OnInit {
     this.days = arr;
   }
 
-  onChangeSpecialists() {
-    if (this.signUpForm.get('speciality')?.value) {
-      this.userService.getSpecialists(this.signUpForm.get('speciality')?.value);
-    }
+  disableButton() {
+    return !this.appointment;
   }
 
-  disableButton(){
-    return !(this.signUpForm.valid && this.appointment)
-  }
-
-  onChangeDate(appointment:any){
-    if(appointment.data){
+  onChangeDate(appointment: any) {
+    if (appointment.data) {
       this.appointment = appointment.data[0];
     }
   }
 
-  preventDefault(event:any){
-    if(!event.target || event.target.classList.value === 'e-header-cells'){
+  preventDefault(event: any) {
+    if (!event.target || event.target.classList.value === 'e-header-cells') {
       event.cancel = true;
     }
   }
 
+  async selectSpecialist(specialist: User) {
+    this.selectedSpecialist = specialist;
+    await this.scheduleService.loadHours(specialist.email);
+    this.selectedSpeciality = undefined;
+  }
+
+  selectSpeciality(speciality: string) {
+    this.selectedSpeciality = undefined;
+    setTimeout(() => {
+      this.selectedSpeciality = speciality;
+    }, 100);
+  }
+
+  selectPatient(patient: any) {
+    this.selectedPatient = patient.value;
+  }
+
   async handleRequestAppointment() {
     const appointment = {
-      speciality: this.signUpForm.get('speciality')?.value,
-      specialistName: `${this.signUpForm.get('specialist')?.value.name} ${this.signUpForm.get('specialist')?.value.lastName}`,
-      specialistEmail: this.signUpForm.get('specialist')?.value.email,
+      speciality: this.selectedSpeciality,
+      specialistName: `${this.selectedSpecialist?.name} ${this.selectedSpecialist?.lastName}`,
+      specialistEmail: this.selectedSpecialist?.email,
       creationDate: new Date(),
-      patientEmail:this.authService.getUserData().email,
-      patientName: `${this.authService.getUserData().name} ${this.authService.getUserData().lastName}`,
-      status:"Pendiente",
-      ...this.appointment
+      patientEmail:
+        this.selectedPatient?.email || this.authService.getUserData().email,
+      patientName: this.selectedPatient
+        ? `${this.selectedPatient?.name} ${this.selectedPatient.lastName}`
+        : `${this.authService.getUserData().name} ${
+            this.authService.getUserData().lastName
+          }`,
+      status: 'Pendiente',
+      ...this.appointment,
     };
     await this.appointmentService.registerAppointment(appointment);
-    this.signUpForm.reset();
     this.appointment = null;
   }
 }

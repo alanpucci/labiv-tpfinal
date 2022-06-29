@@ -8,7 +8,6 @@ import { HomeComponent } from './home.component';
 import {MatButtonModule} from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-
 @NgModule({
   declarations: [
     HeaderComponent,
@@ -20,7 +19,6 @@ import { MatIconModule } from '@angular/material/icon';
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    
   ]
 })
 export class HomeModule { }

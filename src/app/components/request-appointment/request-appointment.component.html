@@ -4,11 +4,7 @@
       <h2 class="title">Solicitar turno</h2>
     </div>
     <div class="row">
-      <form
-        [formGroup]="signUpForm"
-        style="margin-top: 20px"
-      >
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-6 d-flex justify-content-center">
             <mat-form-field appearance="fill">
               <mat-label>Elige una especialidad</mat-label>
@@ -38,19 +34,37 @@
               </mat-select>
             </mat-form-field>
           </div>
+        </div> -->
+        <div class="col-4" *ngIf="authService.getUserData().type === 'admin'">
+          <h2>Seleccione el paciente</h2>
+          <mat-form-field appearance="fill">
+          <mat-label>Paciente</mat-label>
+            <mat-select (selectionChange)="selectPatient($event)">
+              <mat-option
+                *ngFor="let patient of userService?.patients"
+                [value]="patient"
+                >{{patient.lastName}}, {{patient.name}}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
         </div>
-        <!-- <div class="row" *ngIf="signUpForm.get('specialist')?.value">
-                    <div class="col-6 d-flex justify-content-center">
-                        <mat-form-field appearance="fill">
-                            <mat-label>Elige el día</mat-label>
-                            <mat-select formControlName="date">
-                              <mat-option *ngFor="let day of days" value={{day}}>{{day}}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
-                </div> -->
+        <h2>Seleccione al profesional</h2>
+        <div *ngIf="images" class="row">
+          <div *ngFor="let specialist of userService.specialists" appButtonClicked [selected]="selectedSpecialist===specialist" style="width: 150px; margin:20px" class="d-flex flex-column">
+            <button (click)="selectSpecialist(specialist)" ><img style="width: 100%;" src={{images[specialist.email]}} /></button>
+            {{specialist.lastName}}, {{specialist.name}}
+          </div>
+        </div>
+        <br>
+        <div *ngIf="selectedSpecialist" class="row">
+          <h2>Seleccione la especialidad</h2>
+          <div *ngFor="let speciality of selectedSpecialist?.speciality" class="col-2 d-flex flex-column align-items-center">
+            <button class="speciality-button" (click)="selectSpeciality(speciality)"><img style="width: 100px;" appImageSrc [speciality]="speciality" />{{speciality}}</button>
+          </div>
+        </div>
+        <br><br>
         <ejs-schedule [eventSettings]="eventSettings"
-            *ngIf="signUpForm.get('specialist')?.value"
+            *ngIf="selectedSpeciality"
           locale="es"
           [minDate]="minDate"
           [maxDate]="maxDate"
@@ -61,7 +75,7 @@
           height="400px"
         >
           <e-views>
-            <e-view option="WorkWeek" startHour="8:00" endHour="18:00"></e-view>
+            <e-view option="WorkWeek" [workDays]="scheduleService.schedule[selectedSpeciality].workDays" [startHour]="scheduleService.schedule[selectedSpeciality].startTime" [endHour]="scheduleService.schedule[selectedSpeciality].finishTime"></e-view>
           </e-views>
         </ejs-schedule>
         <br />
@@ -70,13 +84,11 @@
             [disabled]="disableButton()"
             mat-raised-button
             color="primary"
-            type="submit"
             (click)="handleRequestAppointment()"
           >
             Solicitar turno
           </button>
         </div>
-      </form>
     </div>
   </div>
 </div>

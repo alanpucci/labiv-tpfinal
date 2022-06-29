@@ -9,7 +9,12 @@
   font-family: "Jost", sans-serif;
 }
 
-.home-container{
+.router-wrapper {
+  position: relative;
+  width: 100vw;
+  height: calc(100% - 47px);
+  perspective: 1200px;
   height: 100%;
-  width: 100%;
+  width: 100vw;
+  transform-style: preserve-3d;
 }
