@@ -35,5 +35,5 @@ Pantalla de gráficos: Tenemos la posibilidad de ver distintas estádisticas e i
 ![image](https://user-images.githubusercontent.com/51470271/176793722-4aa450bb-8d28-4cb8-9952-cfac80e24449.png)
 
 Solicitar turno:
-https://user-images.githubusercontent.com/51470271/176793898-fc05269e-83a2-4638-a80c-07d2fbfca3a3.mov
+![image](https://user-images.githubusercontent.com/51470271/176794117-966e6a52-5478-422c-9044-3a8f5046c97c.png)
 
