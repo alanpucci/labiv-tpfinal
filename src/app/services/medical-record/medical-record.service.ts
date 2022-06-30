@@ -8,9 +8,10 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class MedicalRecordService {
 
+  medicalRecords:any;
   constructor(private spinner:NgxSpinnerService, private toastr:ToastrService, private afs:AngularFirestore) { }
 
-  async registerSchedule(email:string,medicalRecord: any) {
+  async registerMedicalRecord(email:string,medicalRecord: any) {
     try {
       this.spinner.show();
       await this.afs.collection('medicalRecords').doc(email).update({...medicalRecord})
@@ -31,4 +32,22 @@ export class MedicalRecordService {
       this.spinner.hide();
     }
   }
+
+  async loadMedicalRecords(email: string) {
+    try {
+      this.spinner.show();
+      await this.afs.collection<any>('medicalRecords').doc(email).get().subscribe(data => {
+        this.medicalRecords = data.data();
+        console.log(data.data());
+      });
+      setTimeout(() => {
+        this.spinner.hide();
+      }, 1000);
+    } catch (error:any) {
+      console.log(error);
+      this.spinner.hide();
+      return;
+    }
+  }
+
 }

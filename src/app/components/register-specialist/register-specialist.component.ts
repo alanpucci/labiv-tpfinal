@@ -11,6 +11,7 @@ import { User } from 'src/app/models/user/user';
 })
 export class RegisterSpecialistComponent implements OnInit, OnChanges {
 
+  captcha:boolean=false;
   firstImage:File|null=null;
   @Input() signedUp:boolean=false;
   @Output() newSpecialist=new EventEmitter<User>();
@@ -21,10 +22,10 @@ export class RegisterSpecialistComponent implements OnInit, OnChanges {
     age: new FormControl('',[Validators.pattern("^[0-9]*$"),Validators.required, Validators.min(18), Validators.max(99)]),
     dni: new FormControl('',[Validators.pattern("^[0-9]*$"),Validators.required, Validators.maxLength(8)]),
     speciality: new FormControl('', Validators.required),
+    anotherSpeciality: new FormControl(''),
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', Validators.required),
     repeatPassword: new FormControl('', Validators.required),
-    recaptcha: new FormControl(null, Validators.required)
   })
   constructor(private toast:ToastrService, public specialitiesService:SpecialitiesService) { }
 
@@ -41,9 +42,18 @@ export class RegisterSpecialistComponent implements OnInit, OnChanges {
     }
   }
 
+  validateCaptcha(value:any){
+    console.log(value)
+    this.captcha=value
+  }
+
   handleRegister(){
     try {
-      if(!this.firstImage || !this.signUpForm.valid) throw new Error()
+      if(!this.firstImage || !this.signUpForm.valid || !this.captcha) throw new Error()
+      if(!!this.signUpForm.get('anotherSpeciality')?.value){
+        this.signUpForm.value["speciality"].push(this.signUpForm.get('anotherSpeciality')?.value);
+      }
+      delete this.signUpForm.value['anotherSpeciality']
       this.signUpForm.value["type"]="especialista";
       this.signUpForm.value["files"]=[this.firstImage];
       this.firstImage=null

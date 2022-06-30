@@ -8,6 +8,12 @@ import { EventSettingsModel } from '@syncfusion/ej2-angular-schedule';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { UsersService } from 'src/app/services/users/users.service';
 import { ToastrService } from 'ngx-toastr';
+import { MedicalRecordService } from 'src/app/services/medical-record/medical-record.service';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MedicalRecordComponent } from '../medical-record/medical-record.component';
+import { AppointmentsService } from 'src/app/services/appointments/appointments.service';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
 
 declare let require: Function;
 loadCldr(
@@ -151,6 +157,7 @@ export class ProfileComponent implements OnInit, OnChanges {
   image: string = '';
   startTimes: string[] = [];
   finishTimes: string[] = [];
+  selectedSpecialist: string = '';
   scheduleForm = new FormGroup({
     monday: new FormControl(''),
     tuesday: new FormControl(''),
@@ -165,7 +172,11 @@ export class ProfileComponent implements OnInit, OnChanges {
     public authService: AuthService,
     private storageService: StorageService,
     private scheduleService: SpecialistHoursService,
-    private toast: ToastrService
+    private toast: ToastrService,
+    public medicalRecordsService: MedicalRecordService,
+    public appointmentService: AppointmentsService,
+    public userService: UsersService,
+    public dialog: MatDialog
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -182,12 +193,20 @@ export class ProfileComponent implements OnInit, OnChanges {
   async ngOnInit() {
     this.startTimes = this.createTimes(7, 0);
     this.profile = this.authService.getUserData();
+    if (this.profile.type === 'paciente') {
+      this.medicalRecordsService.loadMedicalRecords(this.profile.email);
+      this.userService.getAllSpecialists();
+    }
     this.scheduleService.loadHours(this.profile?.email!);
     (await this.storageService.getImgUrl(this.profile?.images[0]!)).subscribe(
       (data) => {
         this.image = data;
       }
     );
+  }
+
+  selectSpecialist(specialist: any) {
+    this.selectedSpecialist = specialist.value;
   }
 
   createTimes(hour: number, minutes: number) {
@@ -219,6 +238,70 @@ export class ProfileComponent implements OnInit, OnChanges {
     this.scheduleForm.setValue({ speciality: speciality.value });
   }
 
+  downloadAppointments() {
+    const records = this.medicalRecordsService.medicalRecords;
+    const recordsToDownload: any = [];
+    Object.keys(records).map((key, index) => {
+      if (records[key].specialistEmail === this.selectedSpecialist) {
+        recordsToDownload.push(records[key]);
+      }
+    });
+    recordsToDownload.forEach((record: any) => {
+      let PDF = new jsPDF('p', 'mm', 'a4');
+      PDF.addImage('../../../assets/logo.png', 'PNG', 10, 10, 50, 50);
+      const date = new Date(record.creationDate).toLocaleString();
+      PDF.text(`Clínica MediPlus`, 70, 20);
+      PDF.text(`Historia clínica de ${record.patientName}`, 70, 30);
+      PDF.text(`Atendido por ${record.specialistName}`, 70, 40);
+      PDF.text(`Fecha: ${date}`, 70, 50);
+      PDF.text(`Altura: ${record.height}cm`, 10, 70);
+      PDF.text(`Peso: ${record.weight}kgs`, 10, 80);
+      PDF.text(`Temperatura: ${record.temperature}ºC`, 10, 90);
+      PDF.text(`Presión: ${record.pressure} (media)`, 10, 100);
+      record.firstKey &&
+        PDF.text(`${record.firstKey}: ${record.firstKey}`, 10, 110);
+      record.secondKey &&
+        PDF.text(`${record.secondKey}: ${record.secondKey}`, 10, 120);
+      record.thirdKey &&
+        PDF.text(`${record.thirdKey}: ${record.thirdKey}`, 10, 130);
+      record.fourthKey &&
+        PDF.text(`${record.fourthKey}: ${record.fourthKey}`, 10, 140);
+      record.fifthKey &&
+        PDF.text(`${record.fifthKey}: ${record.fifthKey}`, 10, 150);
+      record.sixthKey &&
+        PDF.text(`${record.sixthKey}: ${record.sixthKey}`, 10, 160);
+      PDF.save(`historia-clínica${record.creationDate}.pdf`);
+    });
+    this.appointmentService.loadAppointments(
+      'especialista',
+      this.selectedSpecialist
+    );
+    setTimeout(() => {
+      const appointments = [...this.appointmentService.appointments];
+      appointments.forEach((appointment: any) => {
+        appointment.startTime = new Date(
+          appointment.startTime.seconds * 1000
+        ).toLocaleString();
+        appointment.endTime = new Date(
+          appointment.endTime.seconds * 1000
+        ).toLocaleString();
+        appointment.creationDate = new Date(
+          appointment.creationDate.seconds * 1000
+        ).toLocaleString();
+        delete appointment.body;
+        delete appointment.review;
+        delete appointment.isAllDay;
+      });
+      const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(appointments);
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+      XLSX.writeFile(
+        wb,
+        `turnos-de-${this.profile?.email}-por-profesional.xlsx`
+      );
+    }, 1000);
+  }
+
   async confirmHours() {
     try {
       if (!this.scheduleForm.valid) throw new Error();
@@ -231,6 +314,13 @@ export class ProfileComponent implements OnInit, OnChanges {
             thursday: this.scheduleForm.get('thursday')?.value!,
             friday: this.scheduleForm.get('friday')?.value!,
           },
+          workDays: [
+            this.scheduleForm.get('monday')?.value! && 1,
+            this.scheduleForm.get('tuesday')?.value! && 2,
+            this.scheduleForm.get('wednesday')?.value! && 3,
+            this.scheduleForm.get('thursday')?.value! && 4,
+            this.scheduleForm.get('friday')?.value! && 5,
+          ],
           startTime: this.scheduleForm.get('startTime')?.value!,
           finishTime: this.scheduleForm.get('finishTime')?.value!,
         },
@@ -239,5 +329,11 @@ export class ProfileComponent implements OnInit, OnChanges {
     } catch (error) {
       this.toast.error('Todos los campos son requeridos');
     }
+  }
+
+  openMedicalRecord(medicalRecord: any) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = medicalRecord;
+    this.dialog.open(MedicalRecordComponent, dialogConfig);
   }
 }

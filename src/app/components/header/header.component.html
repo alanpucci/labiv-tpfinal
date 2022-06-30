@@ -12,6 +12,12 @@
         <button routerLink="/home/profile" mat-button>
           Perfil
         </button>
+        <button *ngIf="userType==='especialista'" routerLink="/home/list-patients" mat-button>
+          Pacientes
+        </button>
+        <button *ngIf="userType==='admin'" routerLink="/home/charts" mat-button>
+          Gráficos
+        </button>
         <button routerLink="/home/appointments" mat-button>
           Turnos
         </button>

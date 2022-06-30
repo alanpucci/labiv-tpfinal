@@ -1,0 +1,58 @@
+<mat-dialog-content class="modal-container" id="invoice" style="padding: 30px;" #invoice>
+  <h1>Detalles de: {{data.name}} {{data.lastName}}</h1>
+  <h2>Tipo: {{data.type}}</h2>
+  <div class="row">
+    <img *ngFor="let image of images" style="width: 100%; max-width: 400px" src="{{ image }}" />
+  </div>
+  <br><br>
+  <div class="row">
+    <h3>
+        <b>Estado:</b> {{data.state}}
+    </h3>
+  </div>
+  <div class="row">
+    <h3>
+        <b>Fecha de creación:</b> {{data.creationDate | dateFormat}}
+    </h3>
+  </div>
+  <div class="row">
+    <h3>
+        <b>Edad:</b> {{data.age}} años
+    </h3>
+  </div>
+  <div class="row">
+    <h3>
+        <b>DNI:</b> {{data.dni}}
+    </h3>
+  </div>
+  <div *ngIf="data.socialWork" class="row">
+    <h3>
+        <b>Obra social:</b> {{data.socialWork}}
+    </h3>
+  </div>
+  <div *ngIf="data.speciality" class="row">
+    <h3>
+        <b>Especialidades:</b> {{data.speciality.join(', ')}}
+    </h3>
+  </div>
+  <div *ngIf="data.type==='paciente'">
+    <h2>Historias clínicas</h2>
+      <button
+        (click)="openMedicalRecord(item)"
+        class="btn btn-primary"
+        *ngFor="let item of medicalRecordService.medicalRecords | keyvalue"
+      >
+        {{ item.key | dateFormat: "isoString" }}
+      </button>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="downloadUserInfo()"
+  >
+    Descargar
+  </button>
+  <button mat-button mat-dialog-close>Cancelar</button>
+</mat-dialog-actions>

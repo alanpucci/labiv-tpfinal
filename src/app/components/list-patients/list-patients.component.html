@@ -1,0 +1,15 @@
+<div class="register-container">
+    <div class="col-8 register-form">
+        <div class="row justify-content-between">
+            <div class="col-3">
+                <h2 class="title">Lista de pacientes</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div *ngFor="let user of usersService.patients" style="width:170px; display: flex; align-items: center; flex-direction: column;">
+                <img width="150px" height="150px" (click)="openDialog(user)" style="border-radius: 100%; object-fit: cover;" src={{images[user.email]}} />
+                <h3>{{user.name}} {{user.lastName}}</h3>
+            </div>
+        </div>
+    </div>
+</div>

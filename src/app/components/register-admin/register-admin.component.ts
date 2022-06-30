@@ -10,6 +10,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 })
 export class RegisterAdminComponent implements OnInit {
 
+  captcha:boolean=false;
   image:File|null=null;
   signUpForm = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -19,7 +20,6 @@ export class RegisterAdminComponent implements OnInit {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', Validators.required),
     repeatPassword: new FormControl('', Validators.required),
-    recaptcha:new FormControl(null, Validators.required)
   })
 
   constructor(private toast:ToastrService, private auth:AuthService) { }
@@ -29,7 +29,7 @@ export class RegisterAdminComponent implements OnInit {
 
   async handleRegister(){
     try {
-      if(!this.image || !this.signUpForm.valid) throw new Error()
+      if(!this.image || !this.signUpForm.valid || !this.captcha) throw new Error()
       this.signUpForm.value["type"]="admin";
       this.signUpForm.value["files"]=[this.image];
       this.image=null
@@ -41,6 +41,11 @@ export class RegisterAdminComponent implements OnInit {
     } catch (error) {
       this.toast.error("Todos los campos son requeridos")
     }
+  }
+
+  validateCaptcha(value:any){
+    console.log(value)
+    this.captcha=value
   }
 
   onFileSelected(event:any, first:boolean) {

@@ -71,7 +71,7 @@
         autocomplete="off"
         />
     </div>
-    <re-captcha formControlName="recaptcha" name="recaptcha"></re-captcha>
+    <app-captcha (captchaResult)="validateCaptcha($event)"></app-captcha>
     <button type="submit">Crear cuenta</button>
     <button type="button" (click)="handleGoBack()">Volver</button>
 </form>

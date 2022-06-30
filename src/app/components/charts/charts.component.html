@@ -1,0 +1,117 @@
+<div class="register-container">
+    <div class="col-8 register-form">
+        <div class="row">
+            <h2 class="title">Gráficos</h2>
+        </div>
+        <div class="row">
+            <mat-tab-group (selectedTabChange)="changes($event)">
+                <mat-tab label="Ingresos al sistema">
+                    <table id="excel-table" class="fl-table" id="logs" #logs>
+                        <thead>
+                          <tr>
+                            <th>Usuario</th>
+                            <th>Día</th>
+                            <th>Horario</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let log of logsService.logs">
+                              <td>{{log.user}}</td>
+                              <td>{{log.day}}</td>
+                              <td>{{log.time}}</td>
+                          </tr>
+                      </tbody>
+                      </table>
+                      <button *ngIf="!!logsService.logs" style="margin-top: 20px; float: right;" class="btn btn-primary" (click)="download('logs')">Descargar</button>
+                </mat-tab>
+                <mat-tab label="Turnos por especialidad">
+                    <x-chartist *ngIf="selectedIndex===1" id="bySpeciality" #bySpeciality
+                        [type]="'Bar'"
+                        [data]="data"
+                        [options]="options"
+                        [events]="events"
+                    ></x-chartist>
+                      <button *ngIf="!!logsService.logs" style="margin-top: 20px; float: right;" class="btn btn-primary" (click)="download('bySpeciality')">Descargar</button>
+                    </mat-tab>
+                <mat-tab label="Turnos por especialista">
+                    <x-chartist *ngIf="selectedIndex===2" id="bySpecialist" #bySpecialist
+                        [type]="'Bar'"
+                        [data]="data"
+                        [options]="options"
+                        [events]="events"
+                    ></x-chartist>
+                      <button *ngIf="!!logsService.logs" style="margin-top: 20px; float: right;" class="btn btn-primary" (click)="download('bySpecialist')">Descargar</button>
+                    </mat-tab>
+                <mat-tab label="Turnos por día">
+                    <x-chartist *ngIf="selectedIndex===3" id="byDay" #byDay
+                        [type]="'Line'"
+                        [data]="data"
+                        [options]="options"
+                        [events]="events"
+                    ></x-chartist>
+                      <button *ngIf="!!logsService.logs" style="margin-top: 20px; float: right;" class="btn btn-primary" (click)="download('byDay')">Descargar</button>
+                    </mat-tab>
+                <mat-tab label="Turnos por solicitados (lapso)">
+                    <div class="d-flex" *ngIf="selectedIndex===4">
+                        <div class="col-5" style="text-align: center;" >
+                            <mat-form-field appearance="fill">
+                                <mat-label>Desde</mat-label>
+                                <input matInput [matDatepicker]="from" (dateInput)="fromChange($event)" (dateChange)="fromChange($event)">
+                                <mat-datepicker-toggle matSuffix [for]="from"></mat-datepicker-toggle>
+                                <mat-datepicker #from></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        <div class="col-5" style="text-align: center;">
+                            <mat-form-field appearance="fill">
+                              <mat-label>Hasta</mat-label>
+                              <input matInput [matDatepicker]="to" (dateInput)="toChange($event)" (dateChange)="toChange($event)">
+                              <mat-datepicker-toggle matSuffix [for]="to"></mat-datepicker-toggle>
+                              <mat-datepicker #to></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-primary" (click)="search()">Buscar</button>
+                        </div>
+                    </div>
+                    <x-chartist *ngIf="selectedIndex===4 && searched" id="byPending" #byPending
+                        [type]="'Bar'"
+                        [data]="data"
+                        [options]="options"
+                        [events]="events"
+                        ></x-chartist>
+                      <button *ngIf="searched" style="margin-top: 20px; float: right;" class="btn btn-primary" (click)="download('byPending')">Descargar</button>
+                    </mat-tab>
+                <mat-tab label="Turnos por finalizados (lapso)">
+                    <div class="d-flex" *ngIf="selectedIndex===5">
+                        <div class="col-5" style="text-align: center;" >
+                            <mat-form-field appearance="fill">
+                                <mat-label>Desde</mat-label>
+                                <input matInput [matDatepicker]="from" (dateInput)="fromChange($event)" (dateChange)="fromChange($event)">
+                                <mat-datepicker-toggle matSuffix [for]="from"></mat-datepicker-toggle>
+                                <mat-datepicker #from></mat-datepicker>
+                              </mat-form-field>
+                        </div>
+                        <div class="col-5" style="text-align: center;">
+                            <mat-form-field appearance="fill">
+                              <mat-label>Hasta</mat-label>
+                              <input matInput [matDatepicker]="to" (dateInput)="toChange($event)" (dateChange)="toChange($event)">
+                              <mat-datepicker-toggle matSuffix [for]="to"></mat-datepicker-toggle>
+                              <mat-datepicker #to></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-primary" (click)="search()">Buscar</button>
+                        </div>
+                    </div>
+                    <x-chartist *ngIf="selectedIndex===5 && searched" id="byFinished" #byFinished
+                        [type]="'Bar'"
+                        [data]="data"
+                        [options]="options"
+                        [events]="events"
+                        ></x-chartist>
+                      <button *ngIf="searched" style="margin-top: 20px; float: right;" class="btn btn-primary" (click)="download('byFinished')">Descargar</button>
+                    </mat-tab>
+              </mat-tab-group>
+        </div>
+    </div>
+</div>

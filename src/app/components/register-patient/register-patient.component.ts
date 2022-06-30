@@ -16,6 +16,7 @@ export class RegisterPatientComponent implements OnInit, OnChanges {
   firstImage:File|null=null;
   secondImage:File|null=null;
   token:string|undefined;
+  captcha:boolean=false;
   @Input() signedUp:boolean=false;
   @Output() newPatient=new EventEmitter<User>();
   @Output() goBack=new EventEmitter<any>();
@@ -28,7 +29,6 @@ export class RegisterPatientComponent implements OnInit, OnChanges {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', Validators.required),
     repeatPassword: new FormControl('', Validators.required),
-    recaptcha:new FormControl(null, Validators.required)
   })
   constructor(private toast:ToastrService) { }
 
@@ -47,9 +47,14 @@ export class RegisterPatientComponent implements OnInit, OnChanges {
     }
   }
 
+  validateCaptcha(value:any){
+    console.log(value)
+    this.captcha=value
+  }
+
   handleRegister(){
     try {
-      if(!this.firstImage || !this.secondImage || !this.signUpForm.valid) throw new Error()
+      if(!this.firstImage || !this.secondImage || !this.signUpForm.valid || !this.captcha) throw new Error()
       this.signUpForm.value["type"]="paciente";
       this.signUpForm.value["files"]=[this.firstImage, this.secondImage];
       this.firstImage=null

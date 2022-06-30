@@ -16,6 +16,14 @@ export class CaptchaComponent implements OnInit {
     this.createCaptcha();
   }
 
+  onChange(value:any){
+    if(value.length==6){
+      setTimeout(()=>{
+        this.validateCaptcha();
+      },200)
+    }
+  }
+
   createCaptcha() {
     const activeCaptcha = document.getElementById("captcha");
     let captcha = []
@@ -32,6 +40,8 @@ export class CaptchaComponent implements OnInit {
   }
 
   validateCaptcha() {
+    console.log(this.enteredCaptcha)
+    console.log(this.captcha)
     this.captchaResult.emit(this.enteredCaptcha === this.captcha);
   }
 

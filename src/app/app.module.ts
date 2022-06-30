@@ -42,6 +42,15 @@ import { MedicalRecordComponent } from './components/medical-record/medical-reco
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { CaptchaComponent } from './components/captcha/captcha.component';
+import { UserDetailComponent } from './components/user-detail/user-detail.component';
+import { UserTypeDirective } from './directives/user-type.directive';
+import { ListPatientsComponent } from './components/list-patients/list-patients.component';
+import { AppointmentListDialogComponent } from './components/appointment-list-dialog/appointment-list-dialog.component';
+import { ChartsComponent } from './components/charts/charts.component';
+import { ChartistModule } from 'ng-chartist';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { PollDialogComponent } from './components/poll-dialog/poll-dialog.component';
 
 
 @NgModule({
@@ -64,6 +73,12 @@ import { CaptchaComponent } from './components/captcha/captcha.component';
     ButtonClickedDirective,
     MedicalRecordComponent,
     CaptchaComponent,
+    UserDetailComponent,
+    UserTypeDirective,
+    ListPatientsComponent,
+    AppointmentListDialogComponent,
+    ChartsComponent,
+    PollDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -91,7 +106,10 @@ import { CaptchaComponent } from './components/captcha/captcha.component';
     TextFieldModule,
     MatCheckboxModule,
     MatSlideToggleModule,
-    MatSliderModule
+    MatSliderModule,
+    ChartistModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [{
     provide: RECAPTCHA_SETTINGS,

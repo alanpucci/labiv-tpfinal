@@ -1,8 +1,7 @@
 <form [formGroup]="medicalRecordForm" (ngSubmit)="registerRecord()">
-    <!-- <form (submit)="registerComment()"> -->
-    <mat-dialog-content class="modal-container">
-        <h1>Registrar historia clínica</h1>
-        <h2>Completa los valores obligatorios</h2>
+    <mat-dialog-content class="modal-container" id="invoice" #invoice>
+        <h1>{{data.value?.pressure?'Historia clínica':'Registra historia clínica'}}</h1>
+        <h2>{{data.value?.pressure?'Información de valores obligatorios':'Completa los valores obligatorios'}}</h2>
         <div class="row">
             <mat-form-field appearance="fill" class="col-6">
                 <mat-label>Altura (en cm)</mat-label>
@@ -100,7 +99,8 @@
         </div>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
+        <button type="button" class="btn btn-primary" *ngIf="!!data.value?.pressure" (click)="download()">Descargar</button>
         <button mat-button mat-dialog-close>Cancelar</button>
-        <button mat-button type="submit">Enviar</button>
+        <button mat-button *ngIf="!data.value?.pressure" type="submit">Enviar</button>
     </mat-dialog-actions>
 </form>

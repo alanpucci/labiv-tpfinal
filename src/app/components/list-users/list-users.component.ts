@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { StorageService } from 'src/app/services/storage/storage.service';
 import { UsersService } from 'src/app/services/users/users.service';
 import * as XLSX from 'xlsx';
+import { UserDetailComponent } from '../user-detail/user-detail.component';
 
 @Component({
   selector: 'app-list-users',
@@ -11,7 +13,7 @@ import * as XLSX from 'xlsx';
 export class ListUsersComponent implements OnInit {
 
   images:any;
-  constructor(public usersService:UsersService, public storageService:StorageService) { }
+  constructor(public usersService:UsersService, public storageService:StorageService,public dialog: MatDialog) { }
 
   async ngOnInit() {
     await this.usersService.loadUsers();
@@ -30,16 +32,21 @@ export class ListUsersComponent implements OnInit {
 
   exportexcel(): void
   {
-    /* pass here the table id */
+    const users = [...this.usersService.users];
+    users.forEach((user:any) => {
+      user.creationDate = new Date(user.creationDate.seconds*1000).toLocaleString();
+    })
     const ws: XLSX.WorkSheet =XLSX.utils.json_to_sheet(this.usersService.users);
- 
-    /* generate workbook and add the worksheet */
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
- 
-    /* save to file */  
     XLSX.writeFile(wb, 'lista-usuarios.xlsx');
  
+  }
+
+  openUserDetail(user:any){
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = user;
+    this.dialog.open(UserDetailComponent, dialogConfig);
   }
 
 

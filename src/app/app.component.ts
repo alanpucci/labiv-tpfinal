@@ -1,6 +1,6 @@
 import { transition, trigger, useAnimation } from '@angular/animations';
 import { Component } from '@angular/core';
-import { moveFromLeft, moveFromRight, rotateCarouselToBottom, rotateCarouselToRight, rotateCubeToBottom, rotateCubeToLeft, rotateFlipToBottom, rotateFlipToRight, slide } from 'ngx-router-animations';
+import { moveFromLeft, moveFromRight, rotateCarouselToBottom, rotateCarouselToLeft, rotateCarouselToRight, rotateCubeToBottom, rotateCubeToLeft, rotateCubeToTop, rotateFlipToBottom, rotateFlipToRight, slide } from 'ngx-router-animations';
 
 @Component({
   selector: 'app-root',
@@ -22,8 +22,17 @@ import { moveFromLeft, moveFromRight, rotateCarouselToBottom, rotateCarouselToRi
     trigger('rotateCarouselToBottom', [
       transition('* => list-users', useAnimation(rotateCarouselToBottom))
     ]),
+    trigger('rotateCubeToTop', [
+      transition('* => request-appointment', useAnimation(rotateCubeToTop))
+    ]),
     trigger('slide', [
-      transition('* => request-appointment', useAnimation(slide))
+      transition('* => list-patients', useAnimation(slide))
+    ]),
+    trigger('slide', [
+      transition('* => charts', useAnimation(slide))
+    ]),
+    trigger('rotateCarouselToLeft', [
+      transition('* => register-admin', useAnimation(rotateCarouselToLeft))
     ]),
   ]
 })

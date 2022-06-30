@@ -9,11 +9,45 @@
     <h3>DNI: {{ profile?.dni }}</h3>
     <h3>Email: {{ profile?.email }}</h3>
     <br /><br />
-    <div *ngIf="authService.getUserData().type === 'paciente'"
-    style="width: 100%"
+    <div
+      *ngIf="authService.getUserData().type === 'paciente'"
+      style="width: 100%"
     >
-    <h2>Mis historias clínicas</h2>
-
+      <h2>Mis atenciones</h2>
+      <div class="row">
+        <div class="col-6">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Especialista</mat-label>
+            <mat-select (selectionChange)="selectSpecialist($event)">
+              <mat-option
+                *ngFor="let specialist of userService?.specialists"
+                value="{{specialist.email}}"
+                >{{specialist.name}} {{specialist.lastName}}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-4">
+          <button (click)="downloadAppointments()"
+            class="btn btn-primary"
+          >
+            Descargar atenciones
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      *ngIf="authService.getUserData().type === 'paciente'"
+      style="width: 100%"
+    >
+      <h2>Mis historias clínicas</h2>
+      <button 
+        (click)="openMedicalRecord(item)"
+        class="btn btn-primary mx-3"
+        *ngFor="let item of medicalRecordsService.medicalRecords | keyvalue"
+      >
+        {{ item.key | dateFormat: "isoString" }}
+      </button>
     </div>
     <div
       *ngIf="authService.getUserData().type === 'especialista'"
@@ -21,66 +55,72 @@
     >
       <h2>Mis horarios</h2>
       <form [formGroup]="scheduleForm" (ngSubmit)="confirmHours()">
-      <div class="row">
-        <h2>Seleccione la especialidad</h2>
-        <mat-form-field appearance="fill">
-        <mat-label>Especialidad</mat-label>
-          <mat-select formControlName="speciality">
-            <mat-option
-              *ngFor="let speciality of profile?.speciality"
-              value="{{speciality}}"
-              >{{speciality}}</mat-option
-            >
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div>
-        <section class="example-section" [formGroup]="scheduleForm">
-        <div>
-          <mat-checkbox formControlName="monday">Lunes</mat-checkbox>
-        </div>
         <div class="row">
-          <mat-checkbox formControlName="tuesday">Martes</mat-checkbox>
-        </div>
-        <div class="row">
-          <mat-checkbox formControlName="wednesday">Miércoles</mat-checkbox>
-        </div>
-        <div class="row">
-          <mat-checkbox formControlName="thursday">Jueves</mat-checkbox>
-        </div>
-        <div class="row">
-          <mat-checkbox formControlName="friday">Viernes</mat-checkbox>
-        </div>
-      </section>
-      </div>
-      <br>
-      <div class="row">
-        <div class="col-6 d-flex justify-content-center">
+          <h2>Seleccione la especialidad</h2>
           <mat-form-field appearance="fill">
-            <mat-label>Horario de entrada</mat-label>
-            <mat-select formControlName="startTime" (selectionChange)="onChangeStartTime($event)"> 
+            <mat-label>Especialidad</mat-label>
+            <mat-select formControlName="speciality">
               <mat-option
-                *ngFor="let hour of startTimes"
-                value="{{hour}}"
-                >{{hour}}</mat-option
+                *ngFor="let speciality of profile?.speciality"
+                value="{{ speciality }}"
+                >{{ speciality }}</mat-option
               >
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="col-6 d-flex justify-content-center">
+        <div>
+          <section class="example-section" [formGroup]="scheduleForm">
+            <div>
+              <mat-checkbox formControlName="monday">Lunes</mat-checkbox>
+            </div>
+            <div class="row">
+              <mat-checkbox formControlName="tuesday">Martes</mat-checkbox>
+            </div>
+            <div class="row">
+              <mat-checkbox formControlName="wednesday">Miércoles</mat-checkbox>
+            </div>
+            <div class="row">
+              <mat-checkbox formControlName="thursday">Jueves</mat-checkbox>
+            </div>
+            <div class="row">
+              <mat-checkbox formControlName="friday">Viernes</mat-checkbox>
+            </div>
+          </section>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-6 d-flex justify-content-center">
             <mat-form-field appearance="fill">
-              <mat-label>Horario de salida</mat-label>
-              <mat-select formControlName="finishTime">
-              <mat-option
-                *ngFor="let hour of finishTimes"
-                value="{{hour}}"
-                >{{hour}}</mat-option
+              <mat-label>Horario de entrada</mat-label>
+              <mat-select
+                formControlName="startTime"
+                (selectionChange)="onChangeStartTime($event)"
+              >
+                <mat-option
+                  *ngFor="let hour of startTimes"
+                  value="{{ hour }}"
+                  >{{ hour }}</mat-option
                 >
               </mat-select>
             </mat-form-field>
           </div>
-          <button mat-raised-button color="primary" type="submit">Confirmar horario</button>
-      </div></form>
+          <div class="col-6 d-flex justify-content-center">
+            <mat-form-field appearance="fill">
+              <mat-label>Horario de salida</mat-label>
+              <mat-select formControlName="finishTime">
+                <mat-option
+                  *ngFor="let hour of finishTimes"
+                  value="{{ hour }}"
+                  >{{ hour }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <button mat-raised-button color="primary" type="submit">
+            Confirmar horario
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

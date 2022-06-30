@@ -32,7 +32,7 @@
               </th>
               <th>Estado</th>
               <th>Reseña</th>
-              <th>Acción</th>
+              <th *ngIf="loggedUser.type!=='admin'">Acción</th>
               <th>Acción</th>
             </tr>
           </thead>
@@ -62,44 +62,96 @@
                   *ngIf="appointment.review"
                   type="button"
                   class="btn btn-circle btn-info"
+                  (click)="setStatus('', appointment.id)"
                 >
                   Ver reseña
                 </button>
               </td>
-              <div *ngIf="loggedUser.type === 'especialista'; else elseBlock">
-                <td [ngSwitch]="appointment.status">
-                  <button
-                    *ngSwitchCase="'Pendiente'"
+              <td>
+                <div *ngIf="loggedUser.type === 'especialista'">
+                  <div [ngSwitch]="appointment.status">
+                    <button
+                      *ngSwitchCase="'Pendiente'"
+                      type="button"
+                      class="btn btn-circle btn-success"
+                      (click)="setStatus('Aceptar', appointment.id)"
+                    >
+                      Aceptar turno
+                    </button>
+                  </div>
+                </div>
+                <button
+                    *ngIf="loggedUser.type==='admin' && appointment.status === 'Pendiente'"
                     type="button"
-                    class="btn btn-circle btn-success"
+                    class="btn btn-circle"
+                    [ngClass]="appointment.status | buttonColor"
                     (click)="setStatus(appointment, appointment.id)"
                   >
-                    Aceptar turno
+                    Cancelar turno
                   </button>
-                </td>
-              </div>
-              <ng-template #elseBlock>
-                <td [ngSwitch]="appointment.status">
-                  <button
-                    *ngSwitchCase="'Pendiente'"
-                    type="button"
-                    class="btn btn-circle btn-success"
-                  >
-                    <!-- {{appointment.status | buttonText}} -->
-                    Aceptar turno
-                  </button>
-                </td>
-              </ng-template>
+              </td>
               <td>
-                <button
-                  *ngIf="appointment.status"
-                  (click)="setStatus(appointment, appointment.id)"
-                  type="button"
-                  class="btn btn-circle"
-                  [ngClass]="appointment.status | buttonColor"
-                >
-                  {{ appointment.status | buttonText }}
-                </button>
+                <div *ngIf="loggedUser.type === 'especialista'; else secondElse">
+                  <div [ngSwitch]="appointment.status">
+                    <button
+                      *ngSwitchCase="'Pendiente'"
+                    type="button"
+                    class="btn btn-circle"
+                    [ngClass]="appointment.status | buttonColor"
+                    (click)="setStatus(appointment, appointment.id)"
+                  >
+                    Cancelar turno
+                  </button>
+                    <button
+                      *ngSwitchCase="'Aceptado'"
+                      type="button"
+                      class="btn btn-circle"
+                      [ngClass]="appointment.status | buttonColor"
+                      (click)="openMedicalRecord(appointment)"
+                    >
+                      Finalizar turno
+                    </button>
+                  </div>
+                </div>
+                <ng-template  #secondElse>
+                  <!-- <button
+                        *ngIf="loggedUser.type==='paciente' && appointment.status==='Pendiente'"
+                        type="button"
+                        class="btn btn-circle"
+                        [ngClass]="appointment.status | buttonColor"
+                        (click)="setStatus(appointment, appointment.id)"
+                      >
+                        Cancelar turno
+                      </button> -->
+                    <div *ngIf="loggedUser.type==='paciente'" [ngSwitch]="appointment.status">
+                      <button
+                        *ngSwitchCase="'Pendiente'"
+                        type="button"
+                        class="btn btn-circle"
+                        [ngClass]="appointment.status | buttonColor"
+                        (click)="setStatus(appointment, appointment.id)"
+                      >
+                        Cancelar turno
+                      </button>
+                      <button
+                      *ngSwitchCase="'Atendido'"
+                      type="button"
+                      class="btn btn-circle btn-success"
+                      (click)="setStatus('Calificar', appointment.id)"
+                      >
+                      Calificar atención
+                    </button>
+                    <button
+                      *ngSwitchCase="'Terminado'"
+                      type="button"
+                      class="btn btn-circle"
+                      [ngClass]="appointment.status | buttonColor"
+                      (click)="setStatus(appointment, appointment.id)"
+                    >
+                      Completar encuesta                      
+                    </button>
+                  </div>
+                </ng-template>
               </td>
               <!-- <td>
                 <button

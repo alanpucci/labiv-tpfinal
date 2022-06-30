@@ -13,7 +13,7 @@ export class ButtonClickedDirective {
   @HostListener('document:click', ['$event.target'])
   onClick(target:any) {
     const requiredStyles: any = {
-      'width':'200px'
+      'width':'250px'
     };
     if(this.selected){
       Object.keys(requiredStyles).forEach((newStyle) => {

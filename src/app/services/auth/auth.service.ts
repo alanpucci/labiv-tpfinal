@@ -9,6 +9,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { first } from 'rxjs';
 import { User } from 'src/app/models/user/user';
+import { LogsService } from '../logs/logs.service';
 import { StorageService } from '../storage/storage.service';
 import { ERROR, SUCCESS } from './auth.types';
 
@@ -33,7 +34,8 @@ export class AuthService {
     private spinner: NgxSpinnerService,
     private ngZone: NgZone,
     private toastr: ToastrService,
-    private storage:StorageService
+    private storage:StorageService,
+    private logService:LogsService
   ) {}
 
   showError(error: ERROR) {
@@ -87,16 +89,19 @@ export class AuthService {
         return
       } 
       this.spinner.show();
+      let userSearched:any;
+      let error:any;
       await this.afs
         .collection('users', (ref) => ref.where('email', '==', email))
         .get()
         .subscribe((snapshot) => {
           snapshot.forEach(async (res:any) => {
+            try {
             const data: any = {...res.data(),id:res.id};
+            userSearched = data;
             if (data.state === 'pendiente') {
-              this.toastr.error('Usuario pendiente de validación');
               this.spinner.hide();
-              return;
+              error = 'Usuario pendiente de validación';
             }
             if (data.state === 'inactivo') {
               this.toastr.error('Usuario inactivo');
@@ -109,23 +114,36 @@ export class AuthService {
                 password
               );
               if(!this.fastSignInUsers.includes(userDB.user?.email!) && !userDB.user?.emailVerified){
-                this.toastr.error('Usuario pendiente de validación');
                 this.spinner.hide();
-                return;
+                error = 'Usuario pendiente de validación';
               }
-              
+              if(!error){
+              await this.logService.registerMedicalRecord(data);
               sessionStorage.setItem('user', JSON.stringify(data));
-              this.ngZone.run(() => {
-                this.loggedUser = data;
-                this.router.navigateByUrl('/home');
-                this.spinner.hide();
-              });
+                this.ngZone.run(() => {
+                  this.loggedUser = data;
+                  this.router.navigateByUrl('/home');
+                  this.spinner.hide();
+                });
+              }
             } catch (error:any) {
               this.showError(error.code);
               this.spinner.hide();
             }
+          }catch(error){
+            console.log(error)
+          }
           });
         });
+      setTimeout(()=>{
+        if(!userSearched){
+          this.toastr.error('Credenciales inválidas');
+          this.spinner.hide();
+        }
+        if(error){
+          this.toastr.error(error);
+        }
+      },3000)
     } catch (error: any) {
       console.log(error.code);
     }
@@ -181,6 +199,7 @@ export class AuthService {
     try {
       await this.afs.collection('users').add({
         ...user,
+        creationDate:new Date()
       });
     } catch (error: any) {
       this.showError(error.code);

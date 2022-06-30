@@ -64,7 +64,7 @@
                     />
                 </div>
                 <br>
-                <re-captcha formControlName="recaptcha" name="recaptcha"></re-captcha>
+                <app-captcha (captchaResult)="validateCaptcha($event)"></app-captcha>
                 <br>
                 <div class="col-12">
                     <button mat-raised-button color="primary" type="submit">Crear cuenta</button>

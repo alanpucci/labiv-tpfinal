@@ -12,7 +12,7 @@ export class UsersService {
   private itemsCollection?: AngularFirestoreCollection<any>;
   public users: User[] = [];
   public specialists: User[] = [];
-  public patients: User[] = [];
+  public patients: any[] = [];
   
   constructor(
     private afs: AngularFirestore,
@@ -64,6 +64,26 @@ export class UsersService {
       this.spinner.show();
       this.patients = [];
       const itemsCollection = this.afs.collection<User>('users', (ref) => ref.where('type', '==', 'paciente'));
+      itemsCollection.get().subscribe(snapshot => {
+        snapshot.forEach(user=> {
+          this.patients.unshift(user.data());
+        })
+      });
+      setTimeout(() => {
+        this.spinner.hide();
+      }, 1000)
+    } catch (error) {
+      console.log(error)
+      this.spinner.hide();
+      return
+    }
+  }
+
+  async getPatientsByEmail(emails:string[]) {
+    try {
+      this.spinner.show();
+      this.patients = [];
+      const itemsCollection = this.afs.collection<User>('users', (ref) => ref.where('type', '==', 'paciente').where('email','in',emails));
       itemsCollection.get().subscribe(snapshot => {
         snapshot.forEach(user=> {
           this.patients.unshift(user.data());

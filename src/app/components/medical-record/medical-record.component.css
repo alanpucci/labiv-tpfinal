@@ -14,3 +14,7 @@ p{
     margin: auto;
     text-align: center;
 }
+
+.mat-input-element:disabled{
+    color: black !important;
+}

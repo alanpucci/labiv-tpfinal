@@ -37,13 +37,38 @@ export class AppointmentsService {
     try {
       this.spinner.show();
       this.appointments = [];
-      const itemsCollection = this.afs.collection<any>('appointments', (ref) =>
-        ref.where(
-          type === 'paciente' ? 'patientEmail' : 'specialistEmail',
-          '==',
-          user
-        )
-      );
+      let itemsCollection;
+      if(type==='admin'){
+        itemsCollection = this.afs.collection<any>('appointments')
+      }else{
+        itemsCollection = this.afs.collection<any>('appointments', (ref) =>
+          ref.where(
+            type === 'paciente' ? 'patientEmail' : 'specialistEmail',
+            '==',
+            user
+          )
+        );
+      }
+      itemsCollection.get().subscribe((snapshot) => {
+        snapshot.forEach((appointment) => {
+          this.appointments.unshift({...appointment.data(),id:appointment.id});
+        });
+      });
+      setTimeout(() => {
+        this.spinner.hide();
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      this.spinner.hide();
+      return;
+    }
+  }
+
+  async getAllAppointments() {
+    try {
+      this.spinner.show();
+      this.appointments = [];
+      const itemsCollection = this.afs.collection<any>('appointments');
       itemsCollection.get().subscribe((snapshot) => {
         snapshot.forEach((appointment) => {
           this.appointments.unshift({...appointment.data(),id:appointment.id});
@@ -94,14 +119,41 @@ export class AppointmentsService {
     }
   }
 
-  filterAppointments(text: string, userType: string) {
+  filterAppointments(text: string, userType:string) {
+    // filterAppointments(text: string, userType: string) {
+    // this.filteredAppointments = this.appointments.filter((appointment: any) =>
+    //   userType === 'paciente'
+    //     ? appointment.specialistName.toUpperCase().indexOf(text.toUpperCase()) >
+    //       -1
+    //     : appointment.patientName.toUpperCase().indexOf(text.toUpperCase()) >
+    //         -1 ||
+    //       appointment.speciality.toUpperCase().indexOf(text.toUpperCase()) > -1
+    // );
     this.filteredAppointments = this.appointments.filter((appointment: any) =>
-      userType === 'paciente'
-        ? appointment.specialistName.toUpperCase().indexOf(text.toUpperCase()) >
-          -1
-        : appointment.patientName.toUpperCase().indexOf(text.toUpperCase()) >
-            -1 ||
-          appointment.speciality.toUpperCase().indexOf(text.toUpperCase()) > -1
+      {
+        try {
+          Object.keys(appointment).map((key) => {
+            if(key==='body'){
+              Object.keys(appointment[key]).map((bodyKey:any) => {
+                Object.keys(appointment[key][bodyKey]).map((lastKey:any) => {
+                  if((lastKey?.toUpperCase().indexOf(text.toUpperCase()) >-1) || (appointment[key][bodyKey][lastKey].toString().toUpperCase().indexOf(text.toUpperCase()) >-1)){
+                    throw new Error
+                  }
+                })
+                if((bodyKey?.toUpperCase().indexOf(text.toUpperCase()) >-1) || (appointment[key][bodyKey].toString().toUpperCase().indexOf(text.toUpperCase()) >-1)){
+                  throw new Error
+                }
+              })
+            }
+            if((key?.toUpperCase().indexOf(text.toUpperCase()) >-1) || (appointment[key].toString().toUpperCase().indexOf(text.toUpperCase()) >-1)){
+              throw new Error
+            }
+          })
+          return false
+        } catch (error) {
+          return true          
+        }
+      }
     );
   }
 }
